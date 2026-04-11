@@ -48,6 +48,26 @@ The built app is in `~/Library/Developer/Xcode/DerivedData/HttpDebug-*/Build/Pro
 
 The app automatically starts and stops the Node.js server on launch and quit.
 
+### Windows App
+
+Requires .NET 8 SDK and Node.js installed.
+
+```bash
+npm install
+npm run build
+cd winApp
+dotnet run
+```
+
+To publish a self-contained executable:
+
+```bash
+cd winApp
+dotnet publish -c Release -r win-x64 --self-contained
+```
+
+The app automatically starts and stops the Node.js server on launch and quit.
+
 ## Project Structure
 
 ```
@@ -67,6 +87,10 @@ HttpDebug/
 ├── macApp/               # Native macOS app (SwiftUI)
 │   ├── HttpDebugApp/     # Swift source files
 │   └── HttpDebug.xcodeproj
+├── winApp/               # Native Windows app (.NET 8 / WPF)
+│   ├── MainWindow.xaml   # WebView2 window
+│   ├── ServerManager.cs  # Node.js server lifecycle
+│   └── HttpDebug.csproj
 ├── dist/                 # Built frontend (generated)
 └── .httpdebug/           # Data storage (collections, history, settings)
 ```
@@ -80,6 +104,7 @@ HttpDebug/
 | Backend  | Express, Axios, Node.js             |
 | Build    | Vite, tsc                           |
 | macOS    | SwiftUI, WKWebView, Xcode           |
+| Windows  | .NET 8, WPF, WebView2               |
 
 ## Data Storage
 
