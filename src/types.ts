@@ -108,6 +108,27 @@ export interface HistoryEntry {
   timestamp: string;
 }
 
+export interface RequestTab {
+  id: string;
+  request: HttpRequest;
+  response: HttpResponse | null;
+  isLoading: boolean;
+  error: string | null;
+  name: string;
+}
+
+export function createTab(): RequestTab {
+  const req = createEmptyRequest();
+  return {
+    id: req.id,
+    request: req,
+    response: null,
+    isLoading: false,
+    error: null,
+    name: 'New Request',
+  };
+}
+
 export interface AppSettings {
   collectionStoragePath: string;
   defaultHeaders: KeyValuePair[];

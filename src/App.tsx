@@ -4,9 +4,11 @@ import RequestBuilder from './components/RequestBuilder';
 import ResponseViewer from './components/ResponseViewer';
 import CollectionSidebar from './components/CollectionSidebar';
 import SettingsModal from './components/SettingsModal';
+import TabBar from './components/TabBar';
+import UrlBar from './components/UrlBar';
 
 export default function App() {
-  const { loadCollections, loadSettings, loadHistory, sidebarOpen, toggleSidebar, showSettings } =
+  const { loadCollections, loadSettings, loadHistory, sidebarOpen, toggleSidebar, showSettings, addTab } =
     useAppStore();
 
   useEffect(() => {
@@ -14,6 +16,21 @@ export default function App() {
     loadSettings();
     loadHistory();
   }, []);
+
+  useEffect(() => {
+    const handleKeyDown = (e: KeyboardEvent) => {
+      if ((e.metaKey || e.ctrlKey) && e.key === 't') {
+        e.preventDefault();
+        addTab();
+      }
+      if ((e.metaKey || e.ctrlKey) && e.key === 'j') {
+        e.preventDefault();
+        toggleSidebar();
+      }
+    };
+    window.addEventListener('keydown', handleKeyDown);
+    return () => window.removeEventListener('keydown', handleKeyDown);
+  }, [addTab, toggleSidebar]);
 
   return (
     <div className="h-screen flex flex-col bg-surface-950 text-surface-100">
@@ -54,6 +71,8 @@ export default function App() {
 
         {/* Main content */}
         <main className="flex-1 flex flex-col overflow-hidden">
+          <TabBar />
+          <UrlBar />
           <div className="flex-1 flex flex-col lg:flex-row overflow-hidden">
             {/* Request panel */}
             <div className="flex-1 overflow-auto border-b lg:border-b-0 lg:border-r border-surface-700">

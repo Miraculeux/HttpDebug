@@ -1,4 +1,4 @@
-import { useState, useCallback } from 'react';
+import { useState, useCallback, useRef } from 'react';
 import { useAppStore } from '../store';
 
 type Tab = 'body' | 'headers';
@@ -139,6 +139,21 @@ export default function ResponseViewer() {
   const { currentResponse, isLoading } = useAppStore();
   const [activeTab, setActiveTab] = useState<Tab>('body');
   const [wordWrap, setWordWrap] = useState(true);
+  const containerRef = useRef<HTMLDivElement>(null);
+
+  const handleKeyDown = useCallback((e: React.KeyboardEvent) => {
+    if ((e.metaKey || e.ctrlKey) && e.key === 'a') {
+      e.preventDefault();
+      e.stopPropagation();
+      const sel = window.getSelection();
+      if (sel && containerRef.current) {
+        const range = document.createRange();
+        range.selectNodeContents(containerRef.current);
+        sel.removeAllRanges();
+        sel.addRange(range);
+      }
+    }
+  }, []);
 
   if (isLoading) {
     return (
@@ -259,7 +274,7 @@ export default function ResponseViewer() {
       </div>
 
       {/* Content */}
-      <div className="flex-1 overflow-auto p-3">
+      <div className="flex-1 overflow-auto p-3" ref={containerRef} onKeyDown={handleKeyDown} tabIndex={-1}>
         {activeTab === 'body' && (
           <pre
             className={`json-viewer text-surface-200 ${

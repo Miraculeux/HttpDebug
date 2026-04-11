@@ -17,12 +17,15 @@ export default function CollectionSidebar() {
     loadFromHistory,
     clearHistory,
     deleteHistoryEntry,
+    openInNewTab,
   } = useAppStore();
 
   const [newCollectionName, setNewCollectionName] = useState('');
   const [showNewForm, setShowNewForm] = useState(false);
   const [expandedIds, setExpandedIds] = useState<Set<string>>(new Set());
   const [activeTab, setActiveTab] = useState<'collections' | 'history'>('collections');
+  const [historySearch, setHistorySearch] = useState('');
+  const [historySearchScope, setHistorySearchScope] = useState<'all' | 'url' | 'request' | 'response'>('all');
   const fileInputRef = useRef<HTMLInputElement>(null);
 
   const toggleExpand = (id: string) => {
@@ -328,6 +331,35 @@ export default function CollectionSidebar() {
             )}
           </div>
 
+          {/* History search */}
+          {history.length > 0 && (
+            <div className="p-2 border-b border-surface-700 space-y-1.5">
+              <input
+                type="text"
+                value={historySearch}
+                onChange={(e) => setHistorySearch(e.target.value)}
+                placeholder="Search history..."
+                className="w-full bg-surface-800 border border-surface-600 rounded px-2 py-1 text-xs
+                  text-surface-100 placeholder-surface-500 focus:outline-none focus:border-blue-500"
+              />
+              <div className="flex gap-1">
+                {(['all', 'url', 'request', 'response'] as const).map((scope) => (
+                  <button
+                    key={scope}
+                    onClick={() => setHistorySearchScope(scope)}
+                    className={`px-2 py-0.5 text-[10px] rounded-full border transition-colors ${
+                      historySearchScope === scope
+                        ? 'bg-blue-500/20 border-blue-500 text-blue-400'
+                        : 'border-surface-600 text-surface-500 hover:border-surface-400'
+                    }`}
+                  >
+                    {scope.charAt(0).toUpperCase() + scope.slice(1)}
+                  </button>
+                ))}
+              </div>
+            </div>
+          )}
+
           {/* History list */}
           <div className="flex-1 overflow-auto">
             {history.length === 0 ? (
@@ -337,7 +369,22 @@ export default function CollectionSidebar() {
               </div>
             ) : (
               <ul className="py-1">
-                {history.map((entry) => (
+                {history.filter((entry) => {
+                  if (!historySearch.trim()) return true;
+                  const q = historySearch.toLowerCase();
+                  const matchUrl = entry.request.url.toLowerCase().includes(q);
+                  const matchRequest = matchUrl
+                    || entry.request.method.toLowerCase().includes(q)
+                    || entry.request.name.toLowerCase().includes(q)
+                    || (entry.request.body.content || '').toLowerCase().includes(q)
+                    || entry.request.headers.some((h) => h.key.toLowerCase().includes(q) || h.value.toLowerCase().includes(q));
+                  const matchResponse = entry.response.body.toLowerCase().includes(q)
+                    || String(entry.response.status).includes(q);
+                  if (historySearchScope === 'url') return matchUrl;
+                  if (historySearchScope === 'request') return matchRequest;
+                  if (historySearchScope === 'response') return matchResponse;
+                  return matchRequest || matchResponse;
+                }).map((entry) => (
                   <li
                     key={entry.id}
                     onClick={() => loadFromHistory(entry)}
@@ -371,6 +418,20 @@ export default function CollectionSidebar() {
                         </span>
                       </div>
                     </div>
+                    <button
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        openInNewTab(entry);
+                      }}
+                      className="p-0.5 text-surface-600 hover:text-blue-400 opacity-0 group-hover:opacity-100"
+                      title="Open in new tab"
+                    >
+                      <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                        <path d="M18 13v6a2 2 0 01-2 2H5a2 2 0 01-2-2V8a2 2 0 012-2h6" />
+                        <polyline points="15 3 21 3 21 9" />
+                        <line x1="10" y1="14" x2="21" y2="3" />
+                      </svg>
+                    </button>
                     <button
                       onClick={(e) => {
                         e.stopPropagation();
