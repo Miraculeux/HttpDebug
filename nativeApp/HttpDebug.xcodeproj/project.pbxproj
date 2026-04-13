@@ -1,0 +1,326 @@
+// !$*UTF8*$!
+{
+	archiveVersion = 1;
+	classes = {
+	};
+	objectVersion = 56;
+	objects = {
+
+/* Begin PBXBuildFile section */
+		BB00000000000000000001 /* HttpDebugApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = FF00000000000000000001 /* HttpDebugApp.swift */; };
+		BB00000000000000000002 /* Models.swift in Sources */ = {isa = PBXBuildFile; fileRef = FF00000000000000000002 /* Models.swift */; };
+		BB00000000000000000003 /* HttpClient.swift in Sources */ = {isa = PBXBuildFile; fileRef = FF00000000000000000003 /* HttpClient.swift */; };
+		BB00000000000000000004 /* StorageManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = FF00000000000000000004 /* StorageManager.swift */; };
+		BB00000000000000000005 /* AppState.swift in Sources */ = {isa = PBXBuildFile; fileRef = FF00000000000000000005 /* AppState.swift */; };
+		BB00000000000000000006 /* ContentView.swift in Sources */ = {isa = PBXBuildFile; fileRef = FF00000000000000000006 /* ContentView.swift */; };
+		BB00000000000000000007 /* SidebarView.swift in Sources */ = {isa = PBXBuildFile; fileRef = FF00000000000000000007 /* SidebarView.swift */; };
+		BB00000000000000000008 /* RequestView.swift in Sources */ = {isa = PBXBuildFile; fileRef = FF00000000000000000008 /* RequestView.swift */; };
+		BB00000000000000000009 /* ResponseView.swift in Sources */ = {isa = PBXBuildFile; fileRef = FF00000000000000000009 /* ResponseView.swift */; };
+		BB0000000000000000000A /* JsonTreeView.swift in Sources */ = {isa = PBXBuildFile; fileRef = FF0000000000000000000A /* JsonTreeView.swift */; };
+		BB0000000000000000000B /* Components.swift in Sources */ = {isa = PBXBuildFile; fileRef = FF0000000000000000000B /* Components.swift */; };
+		BB0000000000000000000C /* TabBarView.swift in Sources */ = {isa = PBXBuildFile; fileRef = FF0000000000000000000C /* TabBarView.swift */; };
+		BB0000000000000000000D /* UrlBarView.swift in Sources */ = {isa = PBXBuildFile; fileRef = FF0000000000000000000D /* UrlBarView.swift */; };
+		BB0000000000000000000E /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = FF0000000000000000000E /* Assets.xcassets */; };
+/* End PBXBuildFile section */
+
+/* Begin PBXFileReference section */
+		FF00000000000000000001 /* HttpDebugApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HttpDebugApp.swift; sourceTree = "<group>"; };
+		FF00000000000000000002 /* Models.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Models.swift; sourceTree = "<group>"; };
+		FF00000000000000000003 /* HttpClient.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HttpClient.swift; sourceTree = "<group>"; };
+		FF00000000000000000004 /* StorageManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StorageManager.swift; sourceTree = "<group>"; };
+		FF00000000000000000005 /* AppState.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppState.swift; sourceTree = "<group>"; };
+		FF00000000000000000006 /* ContentView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ContentView.swift; sourceTree = "<group>"; };
+		FF00000000000000000007 /* SidebarView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SidebarView.swift; sourceTree = "<group>"; };
+		FF00000000000000000008 /* RequestView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RequestView.swift; sourceTree = "<group>"; };
+		FF00000000000000000009 /* ResponseView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ResponseView.swift; sourceTree = "<group>"; };
+		FF0000000000000000000A /* JsonTreeView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = JsonTreeView.swift; sourceTree = "<group>"; };
+		FF0000000000000000000B /* Components.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Components.swift; sourceTree = "<group>"; };
+		FF0000000000000000000C /* TabBarView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TabBarView.swift; sourceTree = "<group>"; };
+		FF0000000000000000000D /* UrlBarView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UrlBarView.swift; sourceTree = "<group>"; };
+		FF0000000000000000000E /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
+		FF0000000000000000000F /* HttpDebug.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = HttpDebug.entitlements; sourceTree = "<group>"; };
+		FF00000000000000000010 /* HttpDebug.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = HttpDebug.app; sourceTree = BUILT_PRODUCTS_DIR; };
+/* End PBXFileReference section */
+
+/* Begin PBXFrameworksBuildPhase section */
+		DD00000000000000000002 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXFrameworksBuildPhase section */
+
+/* Begin PBXGroup section */
+		AA00000000000000000001 = {
+			isa = PBXGroup;
+			children = (
+				AA00000000000000000002 /* HttpDebug */,
+				AA00000000000000000003 /* Products */,
+			);
+			sourceTree = "<group>";
+		};
+		AA00000000000000000002 /* HttpDebug */ = {
+			isa = PBXGroup;
+			children = (
+				FF00000000000000000001 /* HttpDebugApp.swift */,
+				AA00000000000000000004 /* Models */,
+				AA00000000000000000005 /* Services */,
+				AA00000000000000000006 /* ViewModels */,
+				AA00000000000000000007 /* Views */,
+				FF0000000000000000000E /* Assets.xcassets */,
+				FF0000000000000000000F /* HttpDebug.entitlements */,
+			);
+			path = HttpDebug;
+			sourceTree = "<group>";
+		};
+		AA00000000000000000003 /* Products */ = {
+			isa = PBXGroup;
+			children = (
+				FF00000000000000000010 /* HttpDebug.app */,
+			);
+			name = Products;
+			sourceTree = "<group>";
+		};
+		AA00000000000000000004 /* Models */ = {
+			isa = PBXGroup;
+			children = (
+				FF00000000000000000002 /* Models.swift */,
+			);
+			path = Models;
+			sourceTree = "<group>";
+		};
+		AA00000000000000000005 /* Services */ = {
+			isa = PBXGroup;
+			children = (
+				FF00000000000000000003 /* HttpClient.swift */,
+				FF00000000000000000004 /* StorageManager.swift */,
+			);
+			path = Services;
+			sourceTree = "<group>";
+		};
+		AA00000000000000000006 /* ViewModels */ = {
+			isa = PBXGroup;
+			children = (
+				FF00000000000000000005 /* AppState.swift */,
+			);
+			path = ViewModels;
+			sourceTree = "<group>";
+		};
+		AA00000000000000000007 /* Views */ = {
+			isa = PBXGroup;
+			children = (
+				FF00000000000000000006 /* ContentView.swift */,
+				FF00000000000000000007 /* SidebarView.swift */,
+				FF00000000000000000008 /* RequestView.swift */,
+				FF00000000000000000009 /* ResponseView.swift */,
+				FF0000000000000000000A /* JsonTreeView.swift */,
+				FF0000000000000000000B /* Components.swift */,
+				FF0000000000000000000C /* TabBarView.swift */,
+				FF0000000000000000000D /* UrlBarView.swift */,
+			);
+			path = Views;
+			sourceTree = "<group>";
+		};
+/* End PBXGroup section */
+
+/* Begin PBXNativeTarget section */
+		CC00000000000000000001 /* HttpDebug */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = EE00000000000000000002 /* Build configuration list for PBXNativeTarget "HttpDebug" */;
+			buildPhases = (
+				DD00000000000000000001 /* Sources */,
+				DD00000000000000000002 /* Frameworks */,
+				DD00000000000000000003 /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			name = HttpDebug;
+			productName = HttpDebug;
+			productReference = FF00000000000000000010 /* HttpDebug.app */;
+			productType = "com.apple.product-type.application";
+		};
+/* End PBXNativeTarget section */
+
+/* Begin PBXProject section */
+		CC00000000000000000002 /* Project object */ = {
+			isa = PBXProject;
+			attributes = {
+				BuildIndependentTargetsInParallel = 1;
+				LastSwiftUpdateCheck = 1540;
+				LastUpgradeCheck = 1540;
+			};
+			buildConfigurationList = EE00000000000000000001 /* Build configuration list for PBXProject "HttpDebug" */;
+			compatibilityVersion = "Xcode 14.0";
+			developmentRegion = en;
+			hasScannedForEncodings = 0;
+			knownRegions = (
+				en,
+				Base,
+			);
+			mainGroup = AA00000000000000000001;
+			productRefGroup = AA00000000000000000003 /* Products */;
+			projectDirPath = "";
+			projectRoot = "";
+			targets = (
+				CC00000000000000000001 /* HttpDebug */,
+			);
+		};
+/* End PBXProject section */
+
+/* Begin PBXSourcesBuildPhase section */
+		DD00000000000000000001 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				BB00000000000000000001 /* HttpDebugApp.swift in Sources */,
+				BB00000000000000000002 /* Models.swift in Sources */,
+				BB00000000000000000003 /* HttpClient.swift in Sources */,
+				BB00000000000000000004 /* StorageManager.swift in Sources */,
+				BB00000000000000000005 /* AppState.swift in Sources */,
+				BB00000000000000000006 /* ContentView.swift in Sources */,
+				BB00000000000000000007 /* SidebarView.swift in Sources */,
+				BB00000000000000000008 /* RequestView.swift in Sources */,
+				BB00000000000000000009 /* ResponseView.swift in Sources */,
+				BB0000000000000000000A /* JsonTreeView.swift in Sources */,
+				BB0000000000000000000B /* Components.swift in Sources */,
+				BB0000000000000000000C /* TabBarView.swift in Sources */,
+				BB0000000000000000000D /* UrlBarView.swift in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXSourcesBuildPhase section */
+
+/* Begin PBXResourcesBuildPhase section */
+		DD00000000000000000003 /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				BB0000000000000000000E /* Assets.xcassets in Resources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXResourcesBuildPhase section */
+
+/* Begin XCBuildConfiguration section */
+		EE00000000000000000CF1 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				CLANG_ANALYZER_NONNULL = YES;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++20";
+				COPY_PHASE_STRIP = NO;
+				DEBUG_INFORMATION_FORMAT = dwarf;
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				ENABLE_TESTABILITY = YES;
+				GCC_DYNAMIC_NO_PIC = NO;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					"DEBUG=1",
+					"$(inherited)",
+				);
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNDECLARED_SELECTOR = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				GCC_WARN_UNUSED_FUNCTION = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				MACOSX_DEPLOYMENT_TARGET = 14.0;
+				MTL_ENABLE_DEBUG_INFO = INCLUDE_SOURCE;
+				ONLY_ACTIVE_ARCH = YES;
+				SDKROOT = macosx;
+				SWIFT_ACTIVE_COMPILATION_CONDITIONS = "$(inherited) DEBUG";
+				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
+			};
+			name = Debug;
+		};
+		EE00000000000000000CF2 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				CLANG_ANALYZER_NONNULL = YES;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++20";
+				COPY_PHASE_STRIP = NO;
+				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
+				ENABLE_NS_ASSERTIONS = NO;
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNDECLARED_SELECTOR = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				GCC_WARN_UNUSED_FUNCTION = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				MACOSX_DEPLOYMENT_TARGET = 14.0;
+				SDKROOT = macosx;
+				SWIFT_COMPILATION_MODE = wholemodule;
+			};
+			name = Release;
+		};
+		EE00000000000000000CF3 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				CODE_SIGN_ENTITLEMENTS = HttpDebug/HttpDebug.entitlements;
+				CODE_SIGN_STYLE = Automatic;
+				COMBINE_HIDPI_IMAGES = YES;
+				CURRENT_PROJECT_VERSION = 1;
+				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_KEY_LSApplicationCategoryType = "public.app-category.developer-tools";
+				INFOPLIST_KEY_NSHumanReadableCopyright = "";
+				INFOPLIST_KEY_NSMainStoryboardFile = "";
+				MARKETING_VERSION = 1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = com.httpdebug.native;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SWIFT_EMIT_LOC_STRINGS = YES;
+				SWIFT_VERSION = 5.0;
+			};
+			name = Debug;
+		};
+		EE00000000000000000CF4 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				CODE_SIGN_ENTITLEMENTS = HttpDebug/HttpDebug.entitlements;
+				CODE_SIGN_STYLE = Automatic;
+				COMBINE_HIDPI_IMAGES = YES;
+				CURRENT_PROJECT_VERSION = 1;
+				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_KEY_LSApplicationCategoryType = "public.app-category.developer-tools";
+				INFOPLIST_KEY_NSHumanReadableCopyright = "";
+				INFOPLIST_KEY_NSMainStoryboardFile = "";
+				MARKETING_VERSION = 1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = com.httpdebug.native;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SWIFT_EMIT_LOC_STRINGS = YES;
+				SWIFT_VERSION = 5.0;
+			};
+			name = Release;
+		};
+/* End XCBuildConfiguration section */
+
+/* Begin XCConfigurationList section */
+		EE00000000000000000001 /* Build configuration list for PBXProject "HttpDebug" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				EE00000000000000000CF1 /* Debug */,
+				EE00000000000000000CF2 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		EE00000000000000000002 /* Build configuration list for PBXNativeTarget "HttpDebug" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				EE00000000000000000CF3 /* Debug */,
+				EE00000000000000000CF4 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+/* End XCConfigurationList section */
+	};
+	rootObject = CC00000000000000000002 /* Project object */;
+}
