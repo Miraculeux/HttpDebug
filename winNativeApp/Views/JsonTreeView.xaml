@@ -1,0 +1,26 @@
+<UserControl x:Class="HttpDebug.Views.JsonTreeView"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:vm="clr-namespace:HttpDebug.Views"
+             x:Name="Root">
+    <UserControl.Resources>
+        <HierarchicalDataTemplate DataType="{x:Type vm:JsonNode}" ItemsSource="{Binding Children}">
+            <StackPanel Orientation="Horizontal">
+                <TextBlock Text="{Binding Key}" Foreground="{StaticResource Accent}" FontFamily="Consolas"
+                           Visibility="{Binding HasKey, Converter={StaticResource BoolToVis}}" />
+                <TextBlock Text=": " Foreground="{StaticResource TextSecondary}" FontFamily="Consolas"
+                           Visibility="{Binding HasKey, Converter={StaticResource BoolToVis}}" />
+                <TextBlock Text="{Binding DisplayValue}" Foreground="{Binding ValueBrush}" FontFamily="Consolas" />
+            </StackPanel>
+        </HierarchicalDataTemplate>
+    </UserControl.Resources>
+    <TreeView x:Name="Tree" Background="Transparent" BorderThickness="0" Foreground="{StaticResource TextPrimary}">
+        <TreeView.ItemContainerStyle>
+            <Style TargetType="TreeViewItem">
+                <Setter Property="Background" Value="Transparent" />
+                <Setter Property="Foreground" Value="{StaticResource TextPrimary}" />
+                <Setter Property="IsExpanded" Value="True" />
+            </Style>
+        </TreeView.ItemContainerStyle>
+    </TreeView>
+</UserControl>

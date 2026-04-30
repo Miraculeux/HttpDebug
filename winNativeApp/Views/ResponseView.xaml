@@ -1,0 +1,128 @@
+<UserControl x:Class="HttpDebug.Views.ResponseView"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:views="clr-namespace:HttpDebug.Views"
+             xmlns:avedit="http://icsharpcode.net/sharpdevelop/avalonedit"
+             Background="{StaticResource Surface950}"
+             DataContext="{Binding ActiveTab}">
+    <DockPanel LastChildFill="True">
+
+        <!-- Panel header -->
+        <Border DockPanel.Dock="Top" Background="#FFECFDF5"
+                BorderBrush="{StaticResource BorderBrush}" BorderThickness="0,0,0,1"
+                CornerRadius="6,6,0,0">
+            <Grid Margin="14,8">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="Auto" />
+                    <ColumnDefinition Width="*" />
+                    <ColumnDefinition Width="Auto" />
+                </Grid.ColumnDefinitions>
+                <StackPanel Grid.Column="0" Orientation="Horizontal">
+                    <Border Width="4" Height="14" CornerRadius="2"
+                            Background="{StaticResource SuccessBrush}" Margin="0,0,8,0" />
+                    <TextBlock Text="RESPONSE" FontWeight="Bold" FontSize="11"
+                               Foreground="{StaticResource SuccessBrush}" VerticalAlignment="Center" />
+                </StackPanel>
+                <TextBlock Grid.Column="1" Text="awaiting send…"
+                           Foreground="{StaticResource TextDim}" FontStyle="Italic" FontSize="11"
+                           Margin="12,0,0,0" VerticalAlignment="Center"
+                           Visibility="{Binding Response, Converter={StaticResource NullToVis}}" />
+                <StackPanel Grid.Column="2" Orientation="Horizontal"
+                            Visibility="{Binding Response, Converter={StaticResource NotNullToVis}}">
+                    <Border Background="{Binding Response.Status, Converter={StaticResource StatusToColor}}" CornerRadius="3" Padding="8,2" Margin="0,0,8,0">
+                        <TextBlock FontWeight="Bold" Foreground="White" FontSize="11">
+                            <Run Text="{Binding Response.Status, Mode=OneWay}" />
+                            <Run Text=" " />
+                            <Run Text="{Binding Response.StatusText, Mode=OneWay}" />
+                        </TextBlock>
+                    </Border>
+                    <TextBlock Text="{Binding Response.Time, Converter={StaticResource MsToString}}" Foreground="{StaticResource TextSecondary}" Margin="0,0,12,0" FontSize="11" />
+                    <TextBlock Text="{Binding Response.Size, Converter={StaticResource BytesToString}}" Foreground="{StaticResource TextSecondary}" FontSize="11" />
+                </StackPanel>
+            </Grid>
+        </Border>
+
+        <!-- Tab strip + status -->
+        <Border DockPanel.Dock="Top" BorderBrush="{StaticResource BorderBrush}" BorderThickness="0,0,0,1">
+            <Grid>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="Auto" />
+                    <ColumnDefinition Width="*" />
+                    <ColumnDefinition Width="Auto" />
+                </Grid.ColumnDefinitions>
+                <StackPanel Grid.Column="0" Orientation="Horizontal" Margin="8,0">
+                    <Button x:Name="BodyTabButton" Tag="body" Click="SwitchTab_Click" Style="{StaticResource SidebarTabButton}" Padding="14,10" Foreground="{StaticResource Accent}">
+                        <TextBlock Text="Body" />
+                    </Button>
+                    <Button x:Name="HeadersTabButton" Tag="headers" Click="SwitchTab_Click" Style="{StaticResource SidebarTabButton}" Padding="14,10">
+                        <TextBlock>
+                            <Run Text="Headers" />
+                            <Run Text=" " /><Run Text="{Binding Response.Headers.Count, Mode=OneWay, FallbackValue=0, StringFormat=({0})}" Foreground="{StaticResource TextDim}" />
+                        </TextBlock>
+                    </Button>
+                </StackPanel>
+
+                <StackPanel x:Name="BodyControls" Grid.Column="2" Orientation="Horizontal" Margin="0,0,8,0"
+                            Visibility="{Binding Response, Converter={StaticResource NotNullToVis}}">
+                    <Button x:Name="RawToggle" Click="ToggleRaw_Click" Style="{StaticResource GhostButton}" Padding="8,4" Margin="0,0,4,0">
+                        <TextBlock Text="Raw" />
+                    </Button>
+                    <Button Click="CopyResponse_Click" Style="{StaticResource GhostButton}" Padding="8,4">
+                        <TextBlock Text="Copy" />
+                    </Button>
+                </StackPanel>
+            </Grid>
+        </Border>
+
+        <Grid>
+            <!-- Empty state -->
+            <Grid Visibility="{Binding Response, Converter={StaticResource NullToVis}}">
+                <StackPanel HorizontalAlignment="Center" VerticalAlignment="Center">
+                    <TextBlock Text="↻" FontSize="48" Foreground="{StaticResource TextDim}" HorizontalAlignment="Center"
+                               Visibility="{Binding IsLoading, Converter={StaticResource BoolToVis}}" />
+                    <TextBlock Text="No response yet" Foreground="{StaticResource TextDim}" HorizontalAlignment="Center"
+                               Visibility="{Binding IsLoading, Converter={StaticResource InvBoolToVis}}" />
+                    <TextBlock Text="Send a request to see the response" Foreground="{StaticResource TextDim}" FontSize="11" Margin="0,4,0,0" HorizontalAlignment="Center"
+                               Visibility="{Binding IsLoading, Converter={StaticResource InvBoolToVis}}" />
+                </StackPanel>
+            </Grid>
+
+            <!-- BODY -->
+            <Grid x:Name="BodyArea" Visibility="{Binding Response, Converter={StaticResource NotNullToVis}}">
+                <ScrollViewer x:Name="TreeScroller" VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Auto"
+                              Padding="14,12" Background="White"
+                              Visibility="Collapsed">
+                    <views:JsonTreeView Json="{Binding Response.Body}" />
+                </ScrollViewer>
+                <TextBox x:Name="RawText" Visibility="Collapsed" />
+                <avedit:TextEditor x:Name="Editor"
+                                   IsReadOnly="True"
+                                   ShowLineNumbers="True"
+                                   FontFamily="Cascadia Mono, Consolas" FontSize="13"
+                                   Foreground="#FF111827" Background="White"
+                                   Padding="6,8"
+                                   HorizontalScrollBarVisibility="Auto"
+                                   VerticalScrollBarVisibility="Auto"
+                                   WordWrap="False" />
+            </Grid>
+
+            <!-- HEADERS -->
+            <ScrollViewer x:Name="HeadersArea" Margin="14,12" Visibility="Collapsed">
+                <ItemsControl ItemsSource="{Binding Response.Headers}">
+                    <ItemsControl.ItemTemplate>
+                        <DataTemplate>
+                            <Grid Margin="0,2">
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="220" />
+                                    <ColumnDefinition Width="*" />
+                                </Grid.ColumnDefinitions>
+                                <TextBlock Grid.Column="0" Text="{Binding Key}" Foreground="{StaticResource Accent}" FontFamily="Consolas" FontSize="12" />
+                                <TextBlock Grid.Column="1" Text="{Binding Value}" Foreground="{StaticResource TextPrimary}" FontFamily="Consolas" FontSize="12" TextWrapping="Wrap" />
+                            </Grid>
+                        </DataTemplate>
+                    </ItemsControl.ItemTemplate>
+                </ItemsControl>
+            </ScrollViewer>
+        </Grid>
+    </DockPanel>
+</UserControl>

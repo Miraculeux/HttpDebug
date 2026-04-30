@@ -1,0 +1,212 @@
+<UserControl x:Class="HttpDebug.Views.RequestView"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:views="clr-namespace:HttpDebug.Views"
+             xmlns:m="clr-namespace:HttpDebug.Models"
+             xmlns:sys="clr-namespace:System;assembly=mscorlib"
+             Background="{StaticResource Surface950}"
+             DataContext="{Binding ActiveRequest}">
+    <UserControl.Resources>
+        <ObjectDataProvider x:Key="AuthTypes" MethodName="GetValues" ObjectType="{x:Type sys:Enum}">
+            <ObjectDataProvider.MethodParameters>
+                <x:Type TypeName="m:AuthType" />
+            </ObjectDataProvider.MethodParameters>
+        </ObjectDataProvider>
+    </UserControl.Resources>
+
+    <DockPanel LastChildFill="True">
+
+        <!-- Panel header -->
+        <Border DockPanel.Dock="Top" Background="#FFEFF4FF"
+                BorderBrush="{StaticResource BorderBrush}" BorderThickness="0,0,0,1"
+                CornerRadius="6,6,0,0">
+            <StackPanel Orientation="Horizontal" Margin="14,8">
+                <Border Width="4" Height="14" CornerRadius="2"
+                        Background="{StaticResource Accent}" Margin="0,0,8,0" />
+                <TextBlock Text="REQUEST" FontWeight="Bold" FontSize="11"
+                           Foreground="{StaticResource Accent}"
+                           VerticalAlignment="Center" />
+                <TextBlock Text="·" Foreground="{StaticResource TextDim}" Margin="8,0" />
+                <TextBlock Text="{Binding Method}" Style="{StaticResource MethodPill}"
+                           Foreground="{Binding Method, Converter={StaticResource MethodToColor}}" />
+                <TextBlock Text="{Binding Url}" Foreground="{StaticResource TextSecondary}"
+                           FontFamily="Cascadia Mono, Consolas" FontSize="11"
+                           TextTrimming="CharacterEllipsis" Margin="8,0,0,0"
+                           MaxWidth="500" />
+            </StackPanel>
+        </Border>
+
+        <!-- Tab strip -->
+        <Border DockPanel.Dock="Top" BorderBrush="{StaticResource BorderBrush}" BorderThickness="0,0,0,1">
+            <StackPanel Orientation="Horizontal" Margin="8,0">
+                <Button x:Name="ParamsTab" Tag="params" Click="SwitchTab_Click" Style="{StaticResource SidebarTabButton}" Padding="14,10" Foreground="{StaticResource Accent}">
+                    <TextBlock>
+                        <Run Text="Params" />
+                        <Run Text=" " /><Run Text="{Binding Params.Count, Mode=OneWay, StringFormat=({0})}" Foreground="{StaticResource TextDim}" />
+                    </TextBlock>
+                </Button>
+                <Button x:Name="HeadersTab" Tag="headers" Click="SwitchTab_Click" Style="{StaticResource SidebarTabButton}" Padding="14,10">
+                    <TextBlock>
+                        <Run Text="Headers" />
+                        <Run Text=" " /><Run Text="{Binding Headers.Count, Mode=OneWay, StringFormat=({0})}" Foreground="{StaticResource TextDim}" />
+                    </TextBlock>
+                </Button>
+                <Button x:Name="BodyTab" Tag="body" Click="SwitchTab_Click" Style="{StaticResource SidebarTabButton}" Padding="14,10">
+                    <TextBlock Text="Body" />
+                </Button>
+                <Button x:Name="AuthTab" Tag="auth" Click="SwitchTab_Click" Style="{StaticResource SidebarTabButton}" Padding="14,10">
+                    <TextBlock Text="Auth" />
+                </Button>
+            </StackPanel>
+        </Border>
+
+        <Grid Margin="14,12">
+            <!-- PARAMS -->
+            <ScrollViewer x:Name="ParamsContent" VerticalScrollBarVisibility="Auto">
+                <views:KeyValueEditor Items="{Binding Params}" KeyPlaceholder="key" ValuePlaceholder="value" />
+            </ScrollViewer>
+
+            <!-- HEADERS -->
+            <ScrollViewer x:Name="HeadersContent" VerticalScrollBarVisibility="Auto" Visibility="Collapsed">
+                <views:KeyValueEditor Items="{Binding Headers}" KeyPlaceholder="header" ValuePlaceholder="value" />
+            </ScrollViewer>
+
+            <!-- BODY -->
+            <Grid x:Name="BodyContent" Visibility="Collapsed">
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="Auto" />
+                    <RowDefinition Height="*" />
+                </Grid.RowDefinitions>
+                <StackPanel Grid.Row="0" Orientation="Horizontal" Margin="0,0,0,10">
+                    <Button Tag="None" Click="BodyType_Click" Style="{StaticResource GhostButton}" Padding="10,4" Margin="0,0,4,0">none</Button>
+                    <Button Tag="Json" Click="BodyType_Click" Style="{StaticResource GhostButton}" Padding="10,4" Margin="0,0,4,0">JSON</Button>
+                    <Button Tag="Raw" Click="BodyType_Click" Style="{StaticResource GhostButton}" Padding="10,4" Margin="0,0,4,0">raw</Button>
+                    <Button Tag="FormData" Click="BodyType_Click" Style="{StaticResource GhostButton}" Padding="10,4" Margin="0,0,4,0">form-data</Button>
+                    <Button Tag="UrlEncoded" Click="BodyType_Click" Style="{StaticResource GhostButton}" Padding="10,4" Margin="0,0,4,0">x-www-form-urlencoded</Button>
+                    <Button Click="FormatJson_Click" Style="{StaticResource GhostButton}" Padding="10,4" Margin="12,0,0,0"
+                            Visibility="{Binding Body.Type, Converter={StaticResource EqualsToVis}, ConverterParameter=Json}">Format JSON</Button>
+                </StackPanel>
+
+                <Grid Grid.Row="1">
+                    <TextBlock Text="No body" Foreground="{StaticResource TextDim}" HorizontalAlignment="Center" VerticalAlignment="Center"
+                               Visibility="{Binding Body.Type, Converter={StaticResource EqualsToVis}, ConverterParameter=None}" />
+
+                    <TextBox Text="{Binding Body.Content, UpdateSourceTrigger=PropertyChanged}"
+                             AcceptsReturn="True" AcceptsTab="True" TextWrapping="NoWrap"
+                             VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Auto"
+                             VerticalContentAlignment="Top"
+                             FontFamily="Cascadia Mono, Consolas" FontSize="12"
+                             Tag="{}{&#10;  &quot;key&quot;: &quot;value&quot;&#10;}"
+                             Visibility="{Binding Body.Type, Converter={StaticResource EqualsToVis}, ConverterParameter=Json}" />
+
+                    <TextBox Text="{Binding Body.Content, UpdateSourceTrigger=PropertyChanged}"
+                             AcceptsReturn="True" AcceptsTab="True" TextWrapping="NoWrap"
+                             VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Auto"
+                             VerticalContentAlignment="Top"
+                             FontFamily="Cascadia Mono, Consolas" FontSize="12" Tag="raw text"
+                             Visibility="{Binding Body.Type, Converter={StaticResource EqualsToVis}, ConverterParameter=Raw}" />
+
+                    <ScrollViewer VerticalScrollBarVisibility="Auto"
+                                  Visibility="{Binding Body.Type, Converter={StaticResource EqualsToVis}, ConverterParameter=FormData}">
+                        <views:KeyValueEditor Items="{Binding Body.FormData}" KeyPlaceholder="field" ValuePlaceholder="value" />
+                    </ScrollViewer>
+
+                    <ScrollViewer VerticalScrollBarVisibility="Auto"
+                                  Visibility="{Binding Body.Type, Converter={StaticResource EqualsToVis}, ConverterParameter=UrlEncoded}">
+                        <views:KeyValueEditor Items="{Binding Body.FormData}" KeyPlaceholder="field" ValuePlaceholder="value" />
+                    </ScrollViewer>
+                </Grid>
+            </Grid>
+
+            <!-- AUTH -->
+            <ScrollViewer x:Name="AuthContent" Visibility="Collapsed" VerticalScrollBarVisibility="Auto">
+                <StackPanel>
+                    <StackPanel Orientation="Horizontal" Margin="0,0,0,12">
+                        <TextBlock Text="Type" Width="100" Foreground="{StaticResource TextSecondary}" />
+                        <ComboBox ItemsSource="{Binding Source={StaticResource AuthTypes}}" SelectedItem="{Binding Auth.Type}" MinWidth="180" />
+                    </StackPanel>
+
+                    <StackPanel Visibility="{Binding Auth.Type, Converter={StaticResource EqualsToVis}, ConverterParameter=Basic}">
+                        <Grid Margin="0,0,0,6">
+                            <Grid.ColumnDefinitions><ColumnDefinition Width="100" /><ColumnDefinition Width="*" /></Grid.ColumnDefinitions>
+                            <TextBlock Grid.Column="0" Text="Username" Foreground="{StaticResource TextSecondary}" />
+                            <TextBox Grid.Column="1" Text="{Binding Auth.BasicUsername, UpdateSourceTrigger=PropertyChanged}" />
+                        </Grid>
+                        <Grid>
+                            <Grid.ColumnDefinitions><ColumnDefinition Width="100" /><ColumnDefinition Width="*" /></Grid.ColumnDefinitions>
+                            <TextBlock Grid.Column="0" Text="Password" Foreground="{StaticResource TextSecondary}" />
+                            <TextBox Grid.Column="1" Text="{Binding Auth.BasicPassword, UpdateSourceTrigger=PropertyChanged}" />
+                        </Grid>
+                    </StackPanel>
+
+                    <StackPanel Visibility="{Binding Auth.Type, Converter={StaticResource EqualsToVis}, ConverterParameter=Bearer}">
+                        <Grid Margin="0,0,0,6">
+                            <Grid.ColumnDefinitions><ColumnDefinition Width="100" /><ColumnDefinition Width="*" /></Grid.ColumnDefinitions>
+                            <TextBlock Grid.Column="0" Text="Prefix" Foreground="{StaticResource TextSecondary}" />
+                            <TextBox Grid.Column="1" Text="{Binding Auth.BearerPrefix, UpdateSourceTrigger=PropertyChanged}" />
+                        </Grid>
+                        <Grid>
+                            <Grid.ColumnDefinitions><ColumnDefinition Width="100" /><ColumnDefinition Width="*" /></Grid.ColumnDefinitions>
+                            <TextBlock Grid.Column="0" Text="Token" Foreground="{StaticResource TextSecondary}" VerticalAlignment="Top" Margin="0,8,0,0" />
+                            <TextBox Grid.Column="1" Text="{Binding Auth.BearerToken, UpdateSourceTrigger=PropertyChanged}"
+                                     FontFamily="Cascadia Mono, Consolas" FontSize="13"
+                                     MinHeight="100" MaxHeight="240"
+                                     AcceptsReturn="True" TextWrapping="Wrap"
+                                     VerticalContentAlignment="Top"
+                                     VerticalScrollBarVisibility="Auto"
+                                     Tag="Paste your bearer token here" />
+                        </Grid>
+                    </StackPanel>
+
+                    <StackPanel Visibility="{Binding Auth.Type, Converter={StaticResource EqualsToVis}, ConverterParameter=ApiKey}">
+                        <Grid Margin="0,0,0,6">
+                            <Grid.ColumnDefinitions><ColumnDefinition Width="100" /><ColumnDefinition Width="*" /></Grid.ColumnDefinitions>
+                            <TextBlock Grid.Column="0" Text="Key" Foreground="{StaticResource TextSecondary}" />
+                            <TextBox Grid.Column="1" Text="{Binding Auth.ApiKeyKey, UpdateSourceTrigger=PropertyChanged}" />
+                        </Grid>
+                        <Grid Margin="0,0,0,6">
+                            <Grid.ColumnDefinitions><ColumnDefinition Width="100" /><ColumnDefinition Width="*" /></Grid.ColumnDefinitions>
+                            <TextBlock Grid.Column="0" Text="Value" Foreground="{StaticResource TextSecondary}" />
+                            <TextBox Grid.Column="1" Text="{Binding Auth.ApiKeyValue, UpdateSourceTrigger=PropertyChanged}" />
+                        </Grid>
+                        <Grid>
+                            <Grid.ColumnDefinitions><ColumnDefinition Width="100" /><ColumnDefinition Width="*" /></Grid.ColumnDefinitions>
+                            <TextBlock Grid.Column="0" Text="Add to" Foreground="{StaticResource TextSecondary}" />
+                            <ComboBox Grid.Column="1" SelectedValue="{Binding Auth.ApiKeyAddTo}" SelectedValuePath="Content" HorizontalAlignment="Left" MinWidth="140">
+                                <ComboBoxItem Content="header" />
+                                <ComboBoxItem Content="query" />
+                            </ComboBox>
+                        </Grid>
+                    </StackPanel>
+
+                    <StackPanel Visibility="{Binding Auth.Type, Converter={StaticResource EqualsToVis}, ConverterParameter=OAuth2}">
+                        <Grid>
+                            <Grid.ColumnDefinitions><ColumnDefinition Width="100" /><ColumnDefinition Width="*" /></Grid.ColumnDefinitions>
+                            <TextBlock Grid.Column="0" Text="Token" Foreground="{StaticResource TextSecondary}" VerticalAlignment="Top" Margin="0,8,0,0" />
+                            <TextBox Grid.Column="1" Text="{Binding Auth.OAuth2Token, UpdateSourceTrigger=PropertyChanged}"
+                                     FontFamily="Cascadia Mono, Consolas" FontSize="13"
+                                     MinHeight="100" MaxHeight="240"
+                                     AcceptsReturn="True" TextWrapping="Wrap"
+                                     VerticalContentAlignment="Top"
+                                     VerticalScrollBarVisibility="Auto"
+                                     Tag="Paste your OAuth2 access token here" />
+                        </Grid>
+                    </StackPanel>
+
+                    <StackPanel Visibility="{Binding Auth.Type, Converter={StaticResource EqualsToVis}, ConverterParameter=Digest}">
+                        <Grid Margin="0,0,0,6">
+                            <Grid.ColumnDefinitions><ColumnDefinition Width="100" /><ColumnDefinition Width="*" /></Grid.ColumnDefinitions>
+                            <TextBlock Grid.Column="0" Text="Username" Foreground="{StaticResource TextSecondary}" />
+                            <TextBox Grid.Column="1" Text="{Binding Auth.DigestUsername, UpdateSourceTrigger=PropertyChanged}" />
+                        </Grid>
+                        <Grid>
+                            <Grid.ColumnDefinitions><ColumnDefinition Width="100" /><ColumnDefinition Width="*" /></Grid.ColumnDefinitions>
+                            <TextBlock Grid.Column="0" Text="Password" Foreground="{StaticResource TextSecondary}" />
+                            <TextBox Grid.Column="1" Text="{Binding Auth.DigestPassword, UpdateSourceTrigger=PropertyChanged}" />
+                        </Grid>
+                    </StackPanel>
+                </StackPanel>
+            </ScrollViewer>
+        </Grid>
+    </DockPanel>
+</UserControl>
