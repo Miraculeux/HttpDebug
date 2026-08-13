@@ -15,16 +15,17 @@ namespace HttpDebug.Views;
 public partial class ResponseView : UserControl
 {
     private bool _rawView = true;
+    private bool _responseIsJson;
     private static IHighlightingDefinition? _jsonHighlighting;
 
     public ResponseView()
     {
         InitializeComponent();
-        EnsureJsonHighlightingLoaded();
+        GetJsonHighlighting();
 
         TreeScroller.Visibility = Visibility.Collapsed;
         Editor.Visibility = Visibility.Visible;
-        if (RawToggle.Content is TextBlock tb) tb.Text = "Tree";
+        UpdateBodyView();
 
         DataContextChanged += (_, _) => HookTab();
         Loaded += (_, _) => HookTab();
@@ -52,6 +53,29 @@ public partial class ResponseView : UserControl
         var body = resp?.Body ?? "";
         Editor.Text = body;
         Editor.SyntaxHighlighting = PickHighlighting(resp, body);
+        _responseIsJson = LooksLikeJson(body);
+        _rawView = !_responseIsJson;
+
+        var isHttpError = resp?.Status >= 400;
+        var hasBody = !string.IsNullOrWhiteSpace(body);
+        HttpErrorSummary.Visibility = isHttpError ? Visibility.Visible : Visibility.Collapsed;
+        EmptyErrorBody.Visibility = isHttpError && !hasBody ? Visibility.Visible : Visibility.Collapsed;
+        UpdateBodyView();
+
+        if (resp != null && isHttpError)
+        {
+            HttpErrorTitle.Text = $"Request failed: {resp.Status} {resp.StatusText}".TrimEnd();
+            var contentType = GetHeader(resp, "Content-Type");
+            HttpErrorMeta.Text = string.IsNullOrWhiteSpace(contentType)
+                ? $"{resp.Size:N0} bytes received"
+                : $"{contentType}  |  {resp.Size:N0} bytes received";
+        }
+    }
+
+    private static string GetHeader(HttpResponseInfo response, string name)
+    {
+        var key = response.Headers.Keys.FirstOrDefault(k => string.Equals(k, name, StringComparison.OrdinalIgnoreCase));
+        return key == null ? "" : response.Headers[key] ?? "";
     }
 
     private static IHighlightingDefinition? PickHighlighting(HttpResponseInfo? resp, string body)
@@ -80,19 +104,20 @@ public partial class ResponseView : UserControl
         catch { return false; }
     }
 
-    private static void EnsureJsonHighlightingLoaded()
+    internal static IHighlightingDefinition? GetJsonHighlighting()
     {
-        if (_jsonHighlighting != null) return;
+        if (_jsonHighlighting != null) return _jsonHighlighting;
         try
         {
             var uri = new Uri("pack://application:,,,/Assets/Json.xshd");
             using var stream = Application.GetResourceStream(uri)?.Stream;
-            if (stream == null) return;
+            if (stream == null) return null;
             using var reader = new XmlTextReader(stream);
             _jsonHighlighting = HighlightingLoader.Load(reader, HighlightingManager.Instance);
             HighlightingManager.Instance.RegisterHighlighting("JSON", new[] { ".json" }, _jsonHighlighting);
         }
         catch { }
+        return _jsonHighlighting;
     }
 
     private void SwitchTab_Click(object sender, RoutedEventArgs e)
@@ -115,10 +140,21 @@ public partial class ResponseView : UserControl
     private void ToggleRaw_Click(object sender, RoutedEventArgs e)
     {
         _rawView = !_rawView;
-        TreeScroller.Visibility = _rawView ? Visibility.Collapsed : Visibility.Visible;
-        Editor.Visibility = _rawView ? Visibility.Visible : Visibility.Collapsed;
-        if (RawToggle.Content is TextBlock tb) tb.Text = _rawView ? "Tree" : "Raw";
+        UpdateBodyView();
     }
+
+    private void UpdateBodyView()
+    {
+        var response = (DataContext as RequestTab)?.Response;
+        var hasDisplayableBody = response != null && !string.IsNullOrWhiteSpace(response.Body);
+        var showTree = !_rawView && _responseIsJson && hasDisplayableBody;
+        TreeScroller.Visibility = showTree ? Visibility.Visible : Visibility.Collapsed;
+        Editor.Visibility = !showTree && hasDisplayableBody ? Visibility.Visible : Visibility.Collapsed;
+        RawToggle.IsEnabled = _responseIsJson;
+        if (RawToggle.Content is TextBlock text) text.Text = showTree ? "Raw" : "Tree";
+    }
+
+    private void ViewHeaders_Click(object sender, RoutedEventArgs e) => UpdateTab("headers");
 
     private void CopyResponse_Click(object sender, RoutedEventArgs e)
     {

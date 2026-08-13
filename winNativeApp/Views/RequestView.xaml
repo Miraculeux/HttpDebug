@@ -4,6 +4,7 @@
              xmlns:views="clr-namespace:HttpDebug.Views"
              xmlns:m="clr-namespace:HttpDebug.Models"
              xmlns:sys="clr-namespace:System;assembly=mscorlib"
+             xmlns:avedit="http://icsharpcode.net/sharpdevelop/avalonedit"
              Background="{StaticResource Surface950}"
              DataContext="{Binding ActiveRequest}">
     <UserControl.Resources>
@@ -78,11 +79,11 @@
                     <RowDefinition Height="*" />
                 </Grid.RowDefinitions>
                 <StackPanel Grid.Row="0" Orientation="Horizontal" Margin="0,0,0,10">
-                    <Button Tag="None" Click="BodyType_Click" Style="{StaticResource GhostButton}" Padding="10,4" Margin="0,0,4,0">none</Button>
-                    <Button Tag="Json" Click="BodyType_Click" Style="{StaticResource GhostButton}" Padding="10,4" Margin="0,0,4,0">JSON</Button>
-                    <Button Tag="Raw" Click="BodyType_Click" Style="{StaticResource GhostButton}" Padding="10,4" Margin="0,0,4,0">raw</Button>
-                    <Button Tag="FormData" Click="BodyType_Click" Style="{StaticResource GhostButton}" Padding="10,4" Margin="0,0,4,0">form-data</Button>
-                    <Button Tag="UrlEncoded" Click="BodyType_Click" Style="{StaticResource GhostButton}" Padding="10,4" Margin="0,0,4,0">x-www-form-urlencoded</Button>
+                    <Button x:Name="NoneBodyType" Tag="None" Click="BodyType_Click" Style="{StaticResource GhostButton}" Padding="10,4" Margin="0,0,4,0">none</Button>
+                    <Button x:Name="JsonBodyType" Tag="Json" Click="BodyType_Click" Style="{StaticResource GhostButton}" Padding="10,4" Margin="0,0,4,0">JSON</Button>
+                    <Button x:Name="RawBodyType" Tag="Raw" Click="BodyType_Click" Style="{StaticResource GhostButton}" Padding="10,4" Margin="0,0,4,0">raw</Button>
+                    <Button x:Name="FormDataBodyType" Tag="FormData" Click="BodyType_Click" Style="{StaticResource GhostButton}" Padding="10,4" Margin="0,0,4,0">form-data</Button>
+                    <Button x:Name="UrlEncodedBodyType" Tag="UrlEncoded" Click="BodyType_Click" Style="{StaticResource GhostButton}" Padding="10,4" Margin="0,0,4,0">x-www-form-urlencoded</Button>
                     <Button Click="FormatJson_Click" Style="{StaticResource GhostButton}" Padding="10,4" Margin="12,0,0,0"
                             Visibility="{Binding Body.Type, Converter={StaticResource EqualsToVis}, ConverterParameter=Json}">Format JSON</Button>
                 </StackPanel>
@@ -91,13 +92,15 @@
                     <TextBlock Text="No body" Foreground="{StaticResource TextDim}" HorizontalAlignment="Center" VerticalAlignment="Center"
                                Visibility="{Binding Body.Type, Converter={StaticResource EqualsToVis}, ConverterParameter=None}" />
 
-                    <TextBox Text="{Binding Body.Content, UpdateSourceTrigger=PropertyChanged}"
-                             AcceptsReturn="True" AcceptsTab="True" TextWrapping="NoWrap"
-                             VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Auto"
-                             VerticalContentAlignment="Top"
-                             FontFamily="Cascadia Mono, Consolas" FontSize="12"
-                             Tag="{}{&#10;  &quot;key&quot;: &quot;value&quot;&#10;}"
-                             Visibility="{Binding Body.Type, Converter={StaticResource EqualsToVis}, ConverterParameter=Json}" />
+                    <avedit:TextEditor x:Name="JsonEditor"
+                                       TextChanged="JsonEditor_TextChanged"
+                                       FontFamily="Cascadia Mono, Consolas" FontSize="12"
+                                       Foreground="#FF111827" Background="White"
+                                       Padding="8,6"
+                                       HorizontalScrollBarVisibility="Auto"
+                                       VerticalScrollBarVisibility="Auto"
+                                       WordWrap="False"
+                                       Visibility="{Binding Body.Type, Converter={StaticResource EqualsToVis}, ConverterParameter=Json}" />
 
                     <TextBox Text="{Binding Body.Content, UpdateSourceTrigger=PropertyChanged}"
                              AcceptsReturn="True" AcceptsTab="True" TextWrapping="NoWrap"

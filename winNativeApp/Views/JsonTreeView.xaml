@@ -4,17 +4,32 @@
              xmlns:vm="clr-namespace:HttpDebug.Views"
              x:Name="Root">
     <UserControl.Resources>
+        <Style x:Key="SelectableTreeText" TargetType="TextBox">
+            <Setter Property="IsReadOnly" Value="True" />
+            <Setter Property="Background" Value="Transparent" />
+            <Setter Property="BorderThickness" Value="0" />
+            <Setter Property="Padding" Value="0" />
+            <Setter Property="MinHeight" Value="0" />
+            <Setter Property="FontFamily" Value="Consolas" />
+            <Setter Property="VerticalContentAlignment" Value="Center" />
+            <Setter Property="SelectionBrush" Value="{StaticResource Accent}" />
+        </Style>
         <HierarchicalDataTemplate DataType="{x:Type vm:JsonNode}" ItemsSource="{Binding Children}">
             <StackPanel Orientation="Horizontal">
-                <TextBlock Text="{Binding Key}" Foreground="{StaticResource Accent}" FontFamily="Consolas"
-                           Visibility="{Binding HasKey, Converter={StaticResource BoolToVis}}" />
+                <TextBox Text="{Binding Key}" Foreground="{StaticResource Accent}"
+                         Style="{StaticResource SelectableTreeText}"
+                         Visibility="{Binding HasKey, Converter={StaticResource BoolToVis}}" />
                 <TextBlock Text=": " Foreground="{StaticResource TextSecondary}" FontFamily="Consolas"
                            Visibility="{Binding HasKey, Converter={StaticResource BoolToVis}}" />
-                <TextBlock Text="{Binding DisplayValue}" Foreground="{Binding ValueBrush}" FontFamily="Consolas" />
+                <TextBox Text="{Binding DisplayValue}" Foreground="{Binding ValueBrush}"
+                         Style="{StaticResource SelectableTreeText}" />
             </StackPanel>
         </HierarchicalDataTemplate>
     </UserControl.Resources>
-    <TreeView x:Name="Tree" Background="Transparent" BorderThickness="0" Foreground="{StaticResource TextPrimary}">
+    <TreeView x:Name="Tree" Background="Transparent" BorderThickness="0" Foreground="{StaticResource TextPrimary}"
+              ScrollViewer.VerticalScrollBarVisibility="Auto"
+              ScrollViewer.HorizontalScrollBarVisibility="Auto"
+              ScrollViewer.CanContentScroll="True">
         <TreeView.ItemContainerStyle>
             <Style TargetType="TreeViewItem">
                 <Setter Property="Background" Value="Transparent" />

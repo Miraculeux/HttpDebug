@@ -89,21 +89,56 @@
 
             <!-- BODY -->
             <Grid x:Name="BodyArea" Visibility="{Binding Response, Converter={StaticResource NotNullToVis}}">
-                <ScrollViewer x:Name="TreeScroller" VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Auto"
-                              Padding="14,12" Background="White"
-                              Visibility="Collapsed">
-                    <views:JsonTreeView Json="{Binding Response.Body}" />
-                </ScrollViewer>
-                <TextBox x:Name="RawText" Visibility="Collapsed" />
-                <avedit:TextEditor x:Name="Editor"
-                                   IsReadOnly="True"
-                                   ShowLineNumbers="True"
-                                   FontFamily="Cascadia Mono, Consolas" FontSize="13"
-                                   Foreground="#FF111827" Background="White"
-                                   Padding="6,8"
-                                   HorizontalScrollBarVisibility="Auto"
-                                   VerticalScrollBarVisibility="Auto"
-                                   WordWrap="False" />
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="Auto" />
+                    <RowDefinition Height="*" />
+                </Grid.RowDefinitions>
+
+                <Border x:Name="HttpErrorSummary" Grid.Row="0" Visibility="Collapsed"
+                        Background="#FFFFF7ED" BorderBrush="#FFFED7AA" BorderThickness="0,0,0,1"
+                        Padding="12,9">
+                    <Grid>
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="Auto" />
+                            <ColumnDefinition Width="*" />
+                            <ColumnDefinition Width="Auto" />
+                        </Grid.ColumnDefinitions>
+                        <Border Grid.Column="0" Width="4" CornerRadius="2" Background="{StaticResource DangerBrush}" Margin="0,1,9,1" />
+                        <StackPanel Grid.Column="1">
+                            <TextBlock x:Name="HttpErrorTitle" FontWeight="SemiBold" Foreground="{StaticResource DangerBrush}" />
+                            <TextBlock x:Name="HttpErrorMeta" FontSize="11" Foreground="{StaticResource TextSecondary}" Margin="0,2,0,0" />
+                        </StackPanel>
+                        <Button Grid.Column="2" Click="ViewHeaders_Click" Style="{StaticResource GhostButton}"
+                                Padding="9,4" Margin="10,0,0,0" VerticalAlignment="Center">View headers</Button>
+                    </Grid>
+                </Border>
+
+                <Grid Grid.Row="1">
+                    <Border x:Name="TreeScroller" Padding="14,12" Background="White"
+                            Visibility="Collapsed">
+                        <views:JsonTreeView Json="{Binding Response.Body}" />
+                    </Border>
+                    <TextBox x:Name="RawText" Visibility="Collapsed" />
+                    <avedit:TextEditor x:Name="Editor"
+                                       IsReadOnly="True"
+                                       ShowLineNumbers="True"
+                                       FontFamily="Cascadia Mono, Consolas" FontSize="13"
+                                       Foreground="#FF111827" Background="White"
+                                       Padding="6,8"
+                                       HorizontalScrollBarVisibility="Auto"
+                                       VerticalScrollBarVisibility="Auto"
+                                       WordWrap="False" />
+                    <StackPanel x:Name="EmptyErrorBody" Visibility="Collapsed"
+                                HorizontalAlignment="Center" VerticalAlignment="Center" MaxWidth="360">
+                        <TextBlock Text="No response body" FontWeight="SemiBold" FontSize="14"
+                                   Foreground="{StaticResource TextPrimary}" HorizontalAlignment="Center" />
+                        <TextBlock Text="The server returned an error status without a body. Response headers may contain diagnostic or request-tracking details."
+                                   TextWrapping="Wrap" TextAlignment="Center" FontSize="11"
+                                   Foreground="{StaticResource TextSecondary}" Margin="0,5,0,10" />
+                        <Button Click="ViewHeaders_Click" Style="{StaticResource GhostButton}"
+                                Padding="10,5" HorizontalAlignment="Center">View response headers</Button>
+                    </StackPanel>
+                </Grid>
             </Grid>
 
             <!-- HEADERS -->
