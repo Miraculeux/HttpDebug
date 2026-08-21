@@ -180,8 +180,16 @@ public class AppState : ObservableObject
 
     public void DeleteCollection(RequestCollection c)
     {
+        if (c.IsLocked) return;
         Collections.Remove(c);
         _storage.DeleteCollection(c.Id);
+    }
+
+    public void ToggleCollectionLock(RequestCollection c)
+    {
+        c.IsLocked = !c.IsLocked;
+        c.UpdatedAt = DateTime.UtcNow;
+        _storage.SaveCollection(c);
     }
 
     public void SaveToCollection(RequestCollection c)
@@ -204,6 +212,7 @@ public class AppState : ObservableObject
 
     public void DeleteFromCollection(RequestCollection c, SavedRequest s)
     {
+        if (c.IsLocked) return;
         c.Requests.Remove(s);
         _storage.SaveCollection(c);
     }

@@ -43,10 +43,11 @@
                 <ColumnDefinition Width="*" MinWidth="340" />
             </Grid.ColumnDefinitions>
 
-            <views:SidebarView Grid.Column="0"
+            <views:SidebarView Grid.Column="0" HorizontalAlignment="Stretch"
                 Visibility="{Binding SidebarVisible, Converter={StaticResource BoolToVis}}" />
             <GridSplitter Grid.Column="1" Width="6"
                           Background="Transparent"
+                          ResizeDirection="Columns" ResizeBehavior="PreviousAndNext"
                           Visibility="{Binding SidebarVisible, Converter={StaticResource BoolToVis}}" />
 
             <Border Grid.Column="2" Margin="4,4,3,4"

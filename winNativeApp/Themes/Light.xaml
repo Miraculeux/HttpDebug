@@ -43,6 +43,7 @@
     <conv:EqualsToVisibilityConverter x:Key="EqualsToVis" />
     <conv:CountToVisibilityConverter x:Key="CountToVis" />
     <conv:RelativeTimeConverter x:Key="RelativeTime" />
+    <conv:HistoryDateGroupConverter x:Key="HistoryDateGroup" />
     <conv:BytesToStringConverter x:Key="BytesToString" />
     <conv:MillisecondsToStringConverter x:Key="MsToString" />
     <conv:BooleanInverseConverter x:Key="InvBool" />

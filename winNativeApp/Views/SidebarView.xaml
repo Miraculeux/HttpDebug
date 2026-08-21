@@ -4,16 +4,30 @@
              xmlns:m="clr-namespace:HttpDebug.Models"
              xmlns:views="clr-namespace:HttpDebug.Views"
              Background="{StaticResource Surface900}">
-    <DockPanel LastChildFill="True">
+    <UserControl.Resources>
+        <CollectionViewSource x:Key="GroupedHistory" Source="{Binding History}">
+            <CollectionViewSource.GroupDescriptions>
+                <PropertyGroupDescription PropertyName="Timestamp" Converter="{StaticResource HistoryDateGroup}" />
+            </CollectionViewSource.GroupDescriptions>
+        </CollectionViewSource>
+    </UserControl.Resources>
+    <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="1" />
+            <RowDefinition Height="*" />
+        </Grid.RowDefinitions>
 
         <!-- Tab switcher -->
-        <Grid DockPanel.Dock="Top" Margin="8,8,8,0">
+        <Grid Grid.Row="0" Margin="8,8,8,0">
             <Grid.ColumnDefinitions>
                 <ColumnDefinition Width="*" />
                 <ColumnDefinition Width="*" />
             </Grid.ColumnDefinitions>
             <Button x:Name="CollectionsTabBtn" Grid.Column="0" Style="{StaticResource SidebarTabButton}"
-                    Click="ShowCollections_Click" Foreground="{StaticResource Accent}">
+                    Click="ShowCollections_Click" Foreground="{StaticResource Accent}"
+                    Background="{StaticResource Surface950}" BorderBrush="{StaticResource Accent}"
+                    BorderThickness="0,0,0,2">
                 <TextBlock Text="Collections" />
             </Button>
             <Button x:Name="HistoryTabBtn" Grid.Column="1" Style="{StaticResource SidebarTabButton}"
@@ -22,10 +36,10 @@
             </Button>
         </Grid>
 
-        <Border DockPanel.Dock="Top" Height="1" Background="{StaticResource BorderBrush}" Margin="0,8,0,0" />
+        <Border Grid.Row="1" Background="{StaticResource BorderBrush}" Margin="0,8,0,0" />
 
         <!-- COLLECTIONS PANEL -->
-        <Grid x:Name="CollectionsPanel">
+        <Grid x:Name="CollectionsPanel" Grid.Row="2">
             <Grid.RowDefinitions>
                 <RowDefinition Height="Auto" />
                 <RowDefinition Height="Auto" />
@@ -67,8 +81,15 @@
             </Grid>
 
             <!-- Collections list -->
-            <ScrollViewer Grid.Row="2" VerticalScrollBarVisibility="Auto" Margin="0,4,0,0">
-                <ItemsControl ItemsSource="{Binding Collections}">
+            <ScrollViewer Grid.Row="2" VerticalScrollBarVisibility="Auto"
+                          HorizontalScrollBarVisibility="Disabled" HorizontalContentAlignment="Stretch"
+                          Margin="0,4,0,0">
+                <ItemsControl ItemsSource="{Binding Collections}" HorizontalContentAlignment="Stretch">
+                    <ItemsControl.ItemContainerStyle>
+                        <Style TargetType="ContentPresenter">
+                            <Setter Property="HorizontalAlignment" Value="Stretch" />
+                        </Style>
+                    </ItemsControl.ItemContainerStyle>
                     <ItemsControl.ItemTemplate>
                         <DataTemplate>
                             <Expander Margin="4,2" IsExpanded="False">
@@ -81,12 +102,38 @@
                                         <TextBlock Grid.Column="0" Text="{Binding Name}" FontWeight="SemiBold"
                                                    TextTrimming="CharacterEllipsis" VerticalAlignment="Center" />
                                         <StackPanel Grid.Column="1" Orientation="Horizontal">
+                                                <Button Tag="{Binding}" Click="ToggleCollectionLock_Click" Padding="4">
+                                                <Button.Style>
+                                                    <Style TargetType="Button" BasedOn="{StaticResource IconButton}">
+                                                        <Setter Property="ToolTip" Value="Lock collection" />
+                                                        <Style.Triggers>
+                                                            <DataTrigger Binding="{Binding IsLocked}" Value="True">
+                                                                <Setter Property="ToolTip" Value="Unlock collection" />
+                                                            </DataTrigger>
+                                                        </Style.Triggers>
+                                                    </Style>
+                                                </Button.Style>
+                                                <TextBlock FontSize="12" Foreground="{StaticResource TextDim}">
+                                                    <TextBlock.Style>
+                                                        <Style TargetType="TextBlock">
+                                                            <Setter Property="Text" Value="🔓" />
+                                                            <Style.Triggers>
+                                                                <DataTrigger Binding="{Binding IsLocked}" Value="True">
+                                                                    <Setter Property="Text" Value="🔒" />
+                                                                    <Setter Property="Foreground" Value="{StaticResource Accent}" />
+                                                                </DataTrigger>
+                                                            </Style.Triggers>
+                                                        </Style>
+                                                    </TextBlock.Style>
+                                                </TextBlock>
+                                            </Button>
                                             <Button Style="{StaticResource IconButton}" Tag="{Binding}"
                                                     Click="ExportCollection_Click" ToolTip="Export" Padding="4">
                                                 <Path Data="M 7 9 V 0 M 3 4 L 7 0 L 11 4 M 0 12 H 14" Stroke="{StaticResource TextDim}" StrokeThickness="1.5" Width="14" Height="14" />
                                             </Button>
                                             <Button Style="{StaticResource IconButton}" Tag="{Binding}"
-                                                    Click="DeleteCollection_Click" ToolTip="Delete" Padding="4">
+                                                    Click="DeleteCollection_Click" ToolTip="Delete" Padding="4"
+                                                    Visibility="{Binding IsLocked, Converter={StaticResource InvBoolToVis}}">
                                                 <TextBlock Text="✕" FontSize="11" Foreground="{StaticResource TextDim}" />
                                             </Button>
                                         </StackPanel>
@@ -110,6 +157,7 @@
                                                 <Grid>
                                                     <Grid.ColumnDefinitions>
                                                         <ColumnDefinition Width="Auto" />
+                                                        <ColumnDefinition Width="Auto" />
                                                         <ColumnDefinition Width="*" />
                                                         <ColumnDefinition Width="Auto" />
                                                     </Grid.ColumnDefinitions>
@@ -117,10 +165,14 @@
                                                                Style="{StaticResource MethodPill}"
                                                                Foreground="{Binding Request.Method, Converter={StaticResource MethodToColor}}"
                                                                Margin="0,0,8,0" />
-                                                    <TextBlock Grid.Column="1" Text="{Binding Request.Url}"
+                                                    <TextBlock Grid.Column="1" Text="{Binding Response.Status}"
+                                                               Foreground="{Binding Response.Status, Converter={StaticResource StatusToColor}}"
+                                                               FontFamily="Consolas" Margin="0,0,8,0" />
+                                                    <TextBlock Grid.Column="2" Text="{Binding Request.Url}"
                                                                TextTrimming="CharacterEllipsis" Foreground="{StaticResource TextSecondary}" FontSize="12" />
-                                                    <Button Grid.Column="2" Style="{StaticResource IconButton}" Tag="{Binding}"
-                                                            Click="DeleteSavedRequest_Click" Padding="2" Opacity="0.6">
+                                                    <Button Grid.Column="3" Style="{StaticResource IconButton}" Tag="{Binding}"
+                                                            Click="DeleteSavedRequest_Click" Padding="2" Opacity="0.6"
+                                                            Visibility="{Binding DataContext.IsLocked, RelativeSource={RelativeSource AncestorType=ItemsControl}, Converter={StaticResource InvBoolToVis}}">
                                                         <TextBlock Text="✕" FontSize="10" />
                                                     </Button>
                                                 </Grid>
@@ -136,7 +188,7 @@
         </Grid>
 
         <!-- HISTORY PANEL -->
-        <Grid x:Name="HistoryPanel" Visibility="Collapsed">
+        <Grid x:Name="HistoryPanel" Grid.Row="2" Visibility="Collapsed">
             <Grid.RowDefinitions>
                 <RowDefinition Height="Auto" />
                 <RowDefinition Height="Auto" />
@@ -169,8 +221,26 @@
                 </TextBlock>
             </Border>
 
-            <ScrollViewer Grid.Row="2" VerticalScrollBarVisibility="Auto">
-                <ItemsControl ItemsSource="{Binding History}">
+            <ScrollViewer Grid.Row="2" VerticalScrollBarVisibility="Auto"
+                          HorizontalScrollBarVisibility="Disabled" HorizontalContentAlignment="Stretch">
+                <ItemsControl ItemsSource="{Binding Source={StaticResource GroupedHistory}}" HorizontalContentAlignment="Stretch">
+                    <ItemsControl.ItemContainerStyle>
+                        <Style TargetType="ContentPresenter">
+                            <Setter Property="HorizontalAlignment" Value="Stretch" />
+                        </Style>
+                    </ItemsControl.ItemContainerStyle>
+                    <ItemsControl.GroupStyle>
+                        <GroupStyle>
+                            <GroupStyle.HeaderTemplate>
+                                <DataTemplate>
+                                    <Border Background="{StaticResource Surface850}" Padding="10,5" Margin="0,8,0,2">
+                                        <TextBlock Text="{Binding Name}" FontSize="11" FontWeight="SemiBold"
+                                                   Foreground="{StaticResource TextSecondary}" />
+                                    </Border>
+                                </DataTemplate>
+                            </GroupStyle.HeaderTemplate>
+                        </GroupStyle>
+                    </ItemsControl.GroupStyle>
                     <ItemsControl.ItemTemplate>
                         <DataTemplate>
                             <Border Background="Transparent" Padding="8,6" Margin="4,1" CornerRadius="3"
@@ -222,5 +292,5 @@
                 </ItemsControl>
             </ScrollViewer>
         </Grid>
-    </DockPanel>
+    </Grid>
 </UserControl>

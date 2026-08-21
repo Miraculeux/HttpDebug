@@ -35,8 +35,15 @@ public partial class SidebarView : UserControl
     {
         var accent = (System.Windows.Media.Brush)FindResource("Accent");
         var dim = (System.Windows.Media.Brush)FindResource("TextSecondary");
+        var selectedBackground = (System.Windows.Media.Brush)FindResource("Surface950");
         CollectionsTabBtn.Foreground = collections ? accent : dim;
         HistoryTabBtn.Foreground = collections ? dim : accent;
+        CollectionsTabBtn.Background = collections ? selectedBackground : System.Windows.Media.Brushes.Transparent;
+        HistoryTabBtn.Background = collections ? System.Windows.Media.Brushes.Transparent : selectedBackground;
+        CollectionsTabBtn.BorderBrush = collections ? accent : System.Windows.Media.Brushes.Transparent;
+        HistoryTabBtn.BorderBrush = collections ? System.Windows.Media.Brushes.Transparent : accent;
+        CollectionsTabBtn.BorderThickness = collections ? new Thickness(0, 0, 0, 2) : new Thickness(0);
+        HistoryTabBtn.BorderThickness = collections ? new Thickness(0) : new Thickness(0, 0, 0, 2);
     }
 
     private void ToggleNewForm_Click(object sender, RoutedEventArgs e)
@@ -70,6 +77,12 @@ public partial class SidebarView : UserControl
                 MessageBoxButton.YesNo, MessageBoxImage.Question) == MessageBoxResult.Yes)
                 State.DeleteCollection(c);
         }
+    }
+
+    private void ToggleCollectionLock_Click(object sender, RoutedEventArgs e)
+    {
+        if (sender is FrameworkElement fe && fe.Tag is RequestCollection c)
+            State?.ToggleCollectionLock(c);
     }
 
     private void ExportCollection_Click(object sender, RoutedEventArgs e)
@@ -147,7 +160,7 @@ public partial class SidebarView : UserControl
     {
         if (State == null) return;
         var q = HistorySearchBox.Text.Trim();
-        var view = CollectionViewSource.GetDefaultView(State.History);
+        var view = ((CollectionViewSource)FindResource("GroupedHistory")).View;
         if (string.IsNullOrEmpty(q))
         {
             view.Filter = null;

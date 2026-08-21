@@ -122,10 +122,12 @@ public class RequestCollection : ObservableObject
 {
     private string _name = "";
     private ObservableCollection<SavedRequest> _requests = new();
+    private bool _isLocked;
     public Guid Id { get; set; } = Guid.NewGuid();
     public string Name { get => _name; set => SetField(ref _name, value); }
     public string Description { get; set; } = "";
     public ObservableCollection<SavedRequest> Requests { get => _requests; set => SetField(ref _requests, value); }
+    public bool IsLocked { get => _isLocked; set => SetField(ref _isLocked, value); }
     public DateTime CreatedAt { get; set; } = DateTime.UtcNow;
     public DateTime UpdatedAt { get; set; } = DateTime.UtcNow;
 }
