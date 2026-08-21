@@ -141,6 +141,25 @@ public class HistoryDateGroupConverter : IValueConverter
     public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture) => Binding.DoNothing;
 }
 
+public class UrlDomainConverter : IValueConverter
+{
+    public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
+        => value is string url && Uri.TryCreate(url, UriKind.Absolute, out var uri) ? uri.Authority : "";
+
+    public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture) => Binding.DoNothing;
+}
+
+public class UrlPathConverter : IValueConverter
+{
+    public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
+    {
+        if (value is not string url || !Uri.TryCreate(url, UriKind.Absolute, out var uri)) return value ?? "";
+        return uri.PathAndQuery + uri.Fragment;
+    }
+
+    public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture) => Binding.DoNothing;
+}
+
 public class BytesToStringConverter : IValueConverter
 {
     public object Convert(object value, Type targetType, object parameter, CultureInfo culture)

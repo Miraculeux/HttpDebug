@@ -44,6 +44,8 @@
     <conv:CountToVisibilityConverter x:Key="CountToVis" />
     <conv:RelativeTimeConverter x:Key="RelativeTime" />
     <conv:HistoryDateGroupConverter x:Key="HistoryDateGroup" />
+    <conv:UrlDomainConverter x:Key="UrlDomain" />
+    <conv:UrlPathConverter x:Key="UrlPath" />
     <conv:BytesToStringConverter x:Key="BytesToString" />
     <conv:MillisecondsToStringConverter x:Key="MsToString" />
     <conv:BooleanInverseConverter x:Key="InvBool" />

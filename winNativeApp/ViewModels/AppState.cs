@@ -265,10 +265,45 @@ public class AppState : ObservableObject
 
     public void ToggleSidebar() => SidebarVisible = !SidebarVisible;
 
-    // Deep clone via JSON
     private static HttpRequest CloneRequest(HttpRequest r)
     {
-        var json = System.Text.Json.JsonSerializer.Serialize(r);
-        return System.Text.Json.JsonSerializer.Deserialize<HttpRequest>(json) ?? new HttpRequest();
+        return new HttpRequest
+        {
+            Id = r.Id,
+            Name = r.Name,
+            Method = r.Method,
+            Url = r.Url,
+            Headers = ClonePairs(r.Headers),
+            Params = ClonePairs(r.Params),
+            Body = new RequestBody
+            {
+                Type = r.Body.Type,
+                Content = r.Body.Content,
+                FormData = ClonePairs(r.Body.FormData),
+            },
+            Auth = new AuthConfig
+            {
+                Type = r.Auth.Type,
+                BasicUsername = r.Auth.BasicUsername,
+                BasicPassword = r.Auth.BasicPassword,
+                BearerToken = r.Auth.BearerToken,
+                BearerPrefix = r.Auth.BearerPrefix,
+                ApiKeyKey = r.Auth.ApiKeyKey,
+                ApiKeyValue = r.Auth.ApiKeyValue,
+                ApiKeyAddTo = r.Auth.ApiKeyAddTo,
+                OAuth2Token = r.Auth.OAuth2Token,
+                DigestUsername = r.Auth.DigestUsername,
+                DigestPassword = r.Auth.DigestPassword,
+            },
+        };
     }
+
+    private static ObservableCollection<KvPair> ClonePairs(IEnumerable<KvPair> pairs)
+        => new(pairs.Select(pair => new KvPair
+        {
+            Id = pair.Id,
+            Key = pair.Key,
+            Value = pair.Value,
+            Enabled = pair.Enabled,
+        }));
 }

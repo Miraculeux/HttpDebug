@@ -2,6 +2,8 @@ using System;
 using System.ComponentModel;
 using System.Linq;
 using System.Text.Json;
+using System.Threading;
+using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
 using System.Xml;
@@ -17,6 +19,8 @@ public partial class ResponseView : UserControl
     private bool _rawView = true;
     private bool _responseIsJson;
     private static IHighlightingDefinition? _jsonHighlighting;
+    private static readonly JsonSerializerOptions PrettyJsonOptions = new() { WriteIndented = true };
+    private CancellationTokenSource? _formatCts;
 
     public ResponseView()
     {
@@ -49,12 +53,17 @@ public partial class ResponseView : UserControl
 
     private void RefreshEditor()
     {
+        _formatCts?.Cancel();
+        _formatCts = new CancellationTokenSource();
+
         var resp = (DataContext as RequestTab)?.Response;
         var body = resp?.Body ?? "";
         Editor.Text = body;
         Editor.SyntaxHighlighting = PickHighlighting(resp, body);
         _responseIsJson = LooksLikeJson(body);
-        _rawView = !_responseIsJson;
+        _rawView = true;
+        if (_responseIsJson)
+            _ = FormatJsonAsync(resp, body, _formatCts.Token);
 
         var isHttpError = resp?.Status >= 400;
         var hasBody = !string.IsNullOrWhiteSpace(body);
@@ -99,9 +108,27 @@ public partial class ResponseView : UserControl
     {
         if (string.IsNullOrWhiteSpace(s)) return false;
         var t = s.TrimStart();
-        if (t.Length == 0 || (t[0] != '{' && t[0] != '[')) return false;
-        try { using var _ = JsonDocument.Parse(s); return true; }
-        catch { return false; }
+        return t.Length > 0 && (t[0] == '{' || t[0] == '[');
+    }
+
+    private async Task FormatJsonAsync(HttpResponseInfo? response, string body, CancellationToken cancellationToken)
+    {
+        try
+        {
+            var formatted = await Task.Run(() =>
+            {
+                using var document = JsonDocument.Parse(body);
+                return JsonSerializer.Serialize(document.RootElement, PrettyJsonOptions);
+            }, cancellationToken);
+
+            if (!cancellationToken.IsCancellationRequested &&
+                ReferenceEquals((DataContext as RequestTab)?.Response, response))
+            {
+                Editor.Text = formatted;
+            }
+        }
+        catch (OperationCanceledException) { }
+        catch (JsonException) { }
     }
 
     internal static IHighlightingDefinition? GetJsonHighlighting()
@@ -148,6 +175,8 @@ public partial class ResponseView : UserControl
         var response = (DataContext as RequestTab)?.Response;
         var hasDisplayableBody = response != null && !string.IsNullOrWhiteSpace(response.Body);
         var showTree = !_rawView && _responseIsJson && hasDisplayableBody;
+        if (showTree && JsonTree.Json != response!.Body)
+            JsonTree.Json = response.Body;
         TreeScroller.Visibility = showTree ? Visibility.Visible : Visibility.Collapsed;
         Editor.Visibility = !showTree && hasDisplayableBody ? Visibility.Visible : Visibility.Collapsed;
         RawToggle.IsEnabled = _responseIsJson;

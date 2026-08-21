@@ -116,7 +116,7 @@
                 <Grid Grid.Row="1">
                     <Border x:Name="TreeScroller" Padding="14,12" Background="White"
                             Visibility="Collapsed">
-                        <views:JsonTreeView Json="{Binding Response.Body}" />
+                        <views:JsonTreeView x:Name="JsonTree" />
                     </Border>
                     <TextBox x:Name="RawText" Visibility="Collapsed" />
                     <avedit:TextEditor x:Name="Editor"

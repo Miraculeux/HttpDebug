@@ -142,7 +142,7 @@
                                 <ItemsControl ItemsSource="{Binding Requests}" Margin="22,0,4,4">
                                     <ItemsControl.ItemTemplate>
                                         <DataTemplate>
-                                            <Border Background="Transparent" Padding="6,4" Margin="0,1" CornerRadius="3"
+                                                <Border Background="Transparent" Padding="8,6" Margin="4,1" CornerRadius="3"
                                                     Tag="{Binding}" MouseLeftButtonUp="SavedRequest_Click" Cursor="Hand">
                                                 <Border.Style>
                                                     <Style TargetType="Border">
@@ -155,26 +155,35 @@
                                                     </Style>
                                                 </Border.Style>
                                                 <Grid>
-                                                    <Grid.ColumnDefinitions>
-                                                        <ColumnDefinition Width="Auto" />
-                                                        <ColumnDefinition Width="Auto" />
-                                                        <ColumnDefinition Width="*" />
-                                                        <ColumnDefinition Width="Auto" />
-                                                    </Grid.ColumnDefinitions>
-                                                    <TextBlock Grid.Column="0" Text="{Binding Request.Method}"
-                                                               Style="{StaticResource MethodPill}"
-                                                               Foreground="{Binding Request.Method, Converter={StaticResource MethodToColor}}"
-                                                               Margin="0,0,8,0" />
-                                                    <TextBlock Grid.Column="1" Text="{Binding Response.Status}"
-                                                               Foreground="{Binding Response.Status, Converter={StaticResource StatusToColor}}"
+                                                    <Grid.RowDefinitions>
+                                                        <RowDefinition Height="Auto" />
+                                                        <RowDefinition Height="Auto" />
+                                                    </Grid.RowDefinitions>
+                                                    <Grid Grid.Row="0">
+                                                        <Grid.ColumnDefinitions>
+                                                            <ColumnDefinition Width="Auto" />
+                                                            <ColumnDefinition Width="Auto" />
+                                                            <ColumnDefinition Width="*" />
+                                                            <ColumnDefinition Width="Auto" />
+                                                        </Grid.ColumnDefinitions>
+                                                        <TextBlock Grid.Column="0" Text="{Binding Request.Method}"
+                                                                   Style="{StaticResource MethodPill}"
+                                                                   Foreground="{Binding Request.Method, Converter={StaticResource MethodToColor}}"
+                                                                   Margin="0,0,8,0" />
+                                                        <TextBlock Grid.Column="1" Text="{Binding Response.Status}"
+                                                                   Foreground="{Binding Response.Status, Converter={StaticResource StatusToColor}}"
                                                                FontFamily="Consolas" Margin="0,0,8,0" />
-                                                    <TextBlock Grid.Column="2" Text="{Binding Request.Url}"
-                                                               TextTrimming="CharacterEllipsis" Foreground="{StaticResource TextSecondary}" FontSize="12" />
-                                                    <Button Grid.Column="3" Style="{StaticResource IconButton}" Tag="{Binding}"
-                                                            Click="DeleteSavedRequest_Click" Padding="2" Opacity="0.6"
-                                                            Visibility="{Binding DataContext.IsLocked, RelativeSource={RelativeSource AncestorType=ItemsControl}, Converter={StaticResource InvBoolToVis}}">
-                                                        <TextBlock Text="✕" FontSize="10" />
-                                                    </Button>
+                                                        <TextBlock Grid.Column="2" Text="{Binding Request.Url, Converter={StaticResource UrlDomain}}"
+                                                               TextTrimming="CharacterEllipsis" Foreground="{StaticResource TextSecondary}"
+                                                               FontSize="11" />
+                                                        <Button Grid.Column="3" Style="{StaticResource IconButton}" Tag="{Binding}"
+                                                                Click="DeleteSavedRequest_Click" Padding="2"
+                                                                Visibility="{Binding DataContext.IsLocked, RelativeSource={RelativeSource AncestorType=ItemsControl}, Converter={StaticResource InvBoolToVis}}">
+                                                            <TextBlock Text="✕" FontSize="11" />
+                                                        </Button>
+                                                    </Grid>
+                                                    <TextBlock Grid.Row="1" Text="{Binding Request.Url, Converter={StaticResource UrlPath}}" TextTrimming="CharacterEllipsis"
+                                                               Foreground="{StaticResource TextSecondary}" FontSize="11" Margin="0,2,0,0" />
                                                 </Grid>
                                             </Border>
                                         </DataTemplate>
@@ -263,6 +272,7 @@
                                     <Grid Grid.Row="0">
                                         <Grid.ColumnDefinitions>
                                             <ColumnDefinition Width="Auto" />
+                                            <ColumnDefinition Width="Auto" />
                                             <ColumnDefinition Width="*" />
                                             <ColumnDefinition Width="Auto" />
                                             <ColumnDefinition Width="Auto" />
@@ -273,17 +283,20 @@
                                                    Margin="0,0,8,0" />
                                         <TextBlock Grid.Column="1" Text="{Binding Response.Status}"
                                                    Foreground="{Binding Response.Status, Converter={StaticResource StatusToColor}}"
-                                                   FontFamily="Consolas" />
-                                        <Button Grid.Column="2" Style="{StaticResource IconButton}" Tag="{Binding}"
+                                                   FontFamily="Consolas" Margin="0,0,8,0" />
+                                        <TextBlock Grid.Column="2" Text="{Binding Request.Url, Converter={StaticResource UrlDomain}}"
+                                                   TextTrimming="CharacterEllipsis" Foreground="{StaticResource TextSecondary}"
+                                                   FontSize="11" />
+                                        <Button Grid.Column="3" Style="{StaticResource IconButton}" Tag="{Binding}"
                                                 Click="OpenInNewTab_Click" ToolTip="Open in new tab" Padding="2">
                                             <TextBlock Text="↗" FontSize="11" />
                                         </Button>
-                                        <Button Grid.Column="3" Style="{StaticResource IconButton}" Tag="{Binding}"
+                                        <Button Grid.Column="4" Style="{StaticResource IconButton}" Tag="{Binding}"
                                                 Click="DeleteHistory_Click" Padding="2">
                                             <TextBlock Text="✕" FontSize="11" />
                                         </Button>
                                     </Grid>
-                                    <TextBlock Grid.Row="1" Text="{Binding Request.Url}" TextTrimming="CharacterEllipsis"
+                                    <TextBlock Grid.Row="1" Text="{Binding Request.Url, Converter={StaticResource UrlPath}}" TextTrimming="CharacterEllipsis"
                                                Foreground="{StaticResource TextSecondary}" FontSize="11" Margin="0,2,0,0" />
                                 </Grid>
                             </Border>
