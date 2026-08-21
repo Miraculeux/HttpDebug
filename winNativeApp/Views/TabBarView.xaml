@@ -29,7 +29,8 @@
                                 MinWidth="160" MaxWidth="240"
                                 CornerRadius="6,6,0,0"
                                 Background="Transparent" Cursor="Hand"
-                                MouseLeftButtonDown="TabBorder_MouseLeftButtonDown">
+                                MouseLeftButtonDown="TabBorder_MouseLeftButtonDown"
+                                MouseDown="TabBorder_MouseDown">
                             <Grid>
                                 <Grid.ColumnDefinitions>
                                     <ColumnDefinition Width="Auto" />

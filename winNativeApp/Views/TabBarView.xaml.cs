@@ -20,6 +20,16 @@ public partial class TabBarView : UserControl
             State.ActiveTab = tab;
     }
 
+    private void TabBorder_MouseDown(object sender, MouseButtonEventArgs e)
+    {
+        if (e.ChangedButton == MouseButton.Middle &&
+            sender is FrameworkElement fe && fe.DataContext is RequestTab tab && State != null)
+        {
+            State.CloseTab(tab);
+            e.Handled = true;
+        }
+    }
+
     private void CloseTab_Click(object sender, RoutedEventArgs e)
     {
         if (sender is FrameworkElement fe && fe.DataContext is RequestTab tab && State != null)
