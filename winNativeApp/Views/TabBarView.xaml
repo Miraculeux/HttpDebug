@@ -31,6 +31,12 @@
                                 Background="Transparent" Cursor="Hand"
                                 MouseLeftButtonDown="TabBorder_MouseLeftButtonDown"
                                 MouseDown="TabBorder_MouseDown">
+                            <Border.ContextMenu>
+                                <ContextMenu DataContext="{Binding PlacementTarget.DataContext, RelativeSource={RelativeSource Self}}">
+                                    <MenuItem Header="Duplicate Tab" Click="DuplicateTab_Click" />
+                                    <MenuItem Header="Close Tab" Click="CloseTab_Click" />
+                                </ContextMenu>
+                            </Border.ContextMenu>
                             <Grid>
                                 <Grid.ColumnDefinitions>
                                     <ColumnDefinition Width="Auto" />

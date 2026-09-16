@@ -30,6 +30,12 @@ public partial class TabBarView : UserControl
         }
     }
 
+    private void DuplicateTab_Click(object sender, RoutedEventArgs e)
+    {
+        if (sender is FrameworkElement fe && fe.DataContext is RequestTab tab && State != null)
+            State.DuplicateTab(tab);
+    }
+
     private void CloseTab_Click(object sender, RoutedEventArgs e)
     {
         if (sender is FrameworkElement fe && fe.DataContext is RequestTab tab && State != null)

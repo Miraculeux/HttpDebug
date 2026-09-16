@@ -109,6 +109,16 @@ public class AppState : ObservableObject
         ActiveTab = t;
     }
 
+    public void DuplicateTab(RequestTab tab)
+    {
+        var index = Tabs.IndexOf(tab);
+        if (index < 0) return;
+
+        var duplicate = new RequestTab { Request = CloneRequest(tab.Request) };
+        Tabs.Insert(index + 1, duplicate);
+        ActiveTab = duplicate;
+    }
+
     public void CloseTab(RequestTab tab)
     {
         if (tab == null) return;
