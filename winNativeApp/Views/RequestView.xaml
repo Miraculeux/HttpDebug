@@ -40,22 +40,22 @@
         <!-- Tab strip -->
         <Border DockPanel.Dock="Top" BorderBrush="{StaticResource BorderBrush}" BorderThickness="0,0,0,1">
             <StackPanel Orientation="Horizontal" Margin="8,0">
-                <Button x:Name="ParamsTab" Tag="params" Click="SwitchTab_Click" Style="{StaticResource SidebarTabButton}" Padding="14,10" Foreground="{StaticResource Accent}">
+                <Button x:Name="ParamsTab" Tag="params" Click="SwitchTab_Click" Style="{StaticResource PanelTabButton}" Padding="14,10">
                     <TextBlock>
                         <Run Text="Params" />
                         <Run Text=" " /><Run Text="{Binding Params.Count, Mode=OneWay, StringFormat=({0})}" Foreground="{StaticResource TextDim}" />
                     </TextBlock>
                 </Button>
-                <Button x:Name="HeadersTab" Tag="headers" Click="SwitchTab_Click" Style="{StaticResource SidebarTabButton}" Padding="14,10">
+                <Button x:Name="HeadersTab" Tag="headers" Click="SwitchTab_Click" Style="{StaticResource PanelTabButton}" Padding="14,10">
                     <TextBlock>
                         <Run Text="Headers" />
                         <Run Text=" " /><Run Text="{Binding Headers.Count, Mode=OneWay, StringFormat=({0})}" Foreground="{StaticResource TextDim}" />
                     </TextBlock>
                 </Button>
-                <Button x:Name="BodyTab" Tag="body" Click="SwitchTab_Click" Style="{StaticResource SidebarTabButton}" Padding="14,10">
+                <Button x:Name="BodyTab" Tag="body" Click="SwitchTab_Click" Style="{StaticResource PanelTabButton}" Padding="14,10">
                     <TextBlock Text="Body" />
                 </Button>
-                <Button x:Name="AuthTab" Tag="auth" Click="SwitchTab_Click" Style="{StaticResource SidebarTabButton}" Padding="14,10">
+                <Button x:Name="AuthTab" Tag="auth" Click="SwitchTab_Click" Style="{StaticResource PanelTabButton}" Padding="14,10">
                     <TextBlock Text="Auth" />
                 </Button>
             </StackPanel>

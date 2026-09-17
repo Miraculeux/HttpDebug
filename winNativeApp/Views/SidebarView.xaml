@@ -5,6 +5,11 @@
              xmlns:views="clr-namespace:HttpDebug.Views"
              Background="{StaticResource Surface900}">
     <UserControl.Resources>
+        <ContextMenu x:Key="RequestExportMenu" x:Shared="False"
+                     DataContext="{Binding PlacementTarget.DataContext, RelativeSource={RelativeSource Self}}">
+            <MenuItem Header="Export As PowerShell" Click="ExportPowerShell_Click" />
+            <MenuItem Header="Export As PowerShell With Auth" Tag="WithAuth" Click="ExportPowerShell_Click" />
+        </ContextMenu>
         <CollectionViewSource x:Key="GroupedHistory" Source="{Binding History}">
             <CollectionViewSource.GroupDescriptions>
                 <PropertyGroupDescription PropertyName="Timestamp" Converter="{StaticResource HistoryDateGroup}" />
@@ -143,7 +148,8 @@
                                     <ItemsControl.ItemTemplate>
                                         <DataTemplate>
                                                 <Border Background="Transparent" Padding="8,6" Margin="4,1" CornerRadius="3"
-                                                    Tag="{Binding}" MouseLeftButtonUp="SavedRequest_Click" Cursor="Hand">
+                                                    Tag="{Binding}" MouseLeftButtonUp="SavedRequest_Click" Cursor="Hand"
+                                                    ContextMenu="{StaticResource RequestExportMenu}">
                                                 <Border.Style>
                                                     <Style TargetType="Border">
                                                         <Setter Property="Background" Value="Transparent" />
@@ -253,7 +259,8 @@
                     <ItemsControl.ItemTemplate>
                         <DataTemplate>
                             <Border Background="Transparent" Padding="8,6" Margin="4,1" CornerRadius="3"
-                                    Tag="{Binding}" MouseLeftButtonUp="HistoryEntry_Click" Cursor="Hand">
+                                    Tag="{Binding}" MouseLeftButtonUp="HistoryEntry_Click" Cursor="Hand"
+                                    ContextMenu="{StaticResource RequestExportMenu}">
                                 <Border.Style>
                                     <Style TargetType="Border">
                                         <Setter Property="Background" Value="Transparent" />

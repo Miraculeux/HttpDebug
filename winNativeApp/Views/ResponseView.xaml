@@ -51,10 +51,10 @@
                     <ColumnDefinition Width="Auto" />
                 </Grid.ColumnDefinitions>
                 <StackPanel Grid.Column="0" Orientation="Horizontal" Margin="8,0">
-                    <Button x:Name="BodyTabButton" Tag="body" Click="SwitchTab_Click" Style="{StaticResource SidebarTabButton}" Padding="14,10" Foreground="{StaticResource Accent}">
+                    <Button x:Name="BodyTabButton" Tag="body" Click="SwitchTab_Click" Style="{StaticResource PanelTabButton}" Padding="14,10">
                         <TextBlock Text="Body" />
                     </Button>
-                    <Button x:Name="HeadersTabButton" Tag="headers" Click="SwitchTab_Click" Style="{StaticResource SidebarTabButton}" Padding="14,10">
+                    <Button x:Name="HeadersTabButton" Tag="headers" Click="SwitchTab_Click" Style="{StaticResource PanelTabButton}" Padding="14,10">
                         <TextBlock>
                             <Run Text="Headers" />
                             <Run Text=" " /><Run Text="{Binding Response.Headers.Count, Mode=OneWay, FallbackValue=0, StringFormat=({0})}" Foreground="{StaticResource TextDim}" />

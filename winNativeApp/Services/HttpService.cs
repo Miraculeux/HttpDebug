@@ -15,9 +15,6 @@ public class HttpService
 {
     public async Task<HttpResponseInfo> SendAsync(HttpRequest req, AppSettings settings)
     {
-        var url = BuildUrl(req);
-        if (url == null) throw new InvalidOperationException($"Invalid URL: {req.Url}");
-
         var handler = new HttpClientHandler
         {
             AllowAutoRedirect = settings.FollowRedirects,
@@ -32,22 +29,7 @@ public class HttpService
             Timeout = TimeSpan.FromSeconds(Math.Max(1, settings.Timeout))
         };
 
-        var msg = new HttpRequestMessage(MapMethod(req.Method), url);
-        var contentHeaders = new List<KeyValuePair<string, string>>();
-
-        // Default headers
-        foreach (var h in settings.DefaultHeaders.Where(h => h.Enabled && !string.IsNullOrEmpty(h.Key)))
-            TryAddHeader(msg, contentHeaders, h.Key, h.Value);
-
-        // Request headers
-        foreach (var h in req.Headers.Where(h => h.Enabled && !string.IsNullOrEmpty(h.Key)))
-            TryAddHeader(msg, contentHeaders, h.Key, h.Value);
-
-        // Auth
-        ApplyAuth(msg, req.Auth);
-
-        // Body
-        ApplyBody(msg, req.Body, contentHeaders);
+        using var msg = CreateRequest(req, settings);
 
         var sw = Stopwatch.StartNew();
         HttpResponseMessage resp;
@@ -76,6 +58,21 @@ public class HttpService
             Time = (int)sw.ElapsedMilliseconds,
             Size = bytes.Length,
         };
+    }
+
+    internal static HttpRequestMessage CreateRequest(HttpRequest req, AppSettings settings)
+    {
+        var url = BuildUrl(req);
+        if (url == null) throw new InvalidOperationException($"Invalid URL: {req.Url}");
+
+        var msg = new HttpRequestMessage(MapMethod(req.Method), url);
+        var contentHeaders = new List<KeyValuePair<string, string>>();
+        foreach (var header in settings.DefaultHeaders.Concat(req.Headers)
+                     .Where(header => header.Enabled && !string.IsNullOrEmpty(header.Key)))
+            TryAddHeader(msg, contentHeaders, header.Key, header.Value);
+        ApplyAuth(msg, req.Auth);
+        ApplyBody(msg, req.Body, contentHeaders);
+        return msg;
     }
 
     private static Uri? BuildUrl(HttpRequest req)

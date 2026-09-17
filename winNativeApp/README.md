@@ -24,6 +24,22 @@ Or open `HttpDebug.sln` in Visual Studio and run the `HttpDebugNative` project.
 - Dark theme matching the macOS surface palette
 - Persistent storage at `%USERPROFILE%\.httpdebug\` (settings, history, collections — same JSON shape used by the macOS app)
 
+## PowerShell Export
+
+Right-click a request in Collections or History to copy a PowerShell 7 script to the clipboard:
+
+- **Export As PowerShell** replaces authentication headers, cookies, and recognized token/API-key query values with `<AUTH_TOKEN>` placeholders.
+- **Export As PowerShell With Auth** includes actual authentication values. Treat the clipboard contents and any pasted script as sensitive.
+
+Both options include enabled parameters, headers, request body, and current request settings. Ordinary export does not inspect arbitrary body content for secrets; review scripts before sharing them.
+
+Run the focused regression checks from the repository root:
+
+```powershell
+dotnet build winNativeApp/HttpDebug.csproj -p:OutDir=obj/PowerShellExportCheck/
+pwsh -NoProfile -STA -File winNativeApp/Tests/PowerShellExporter.Tests.ps1
+```
+
 ## Project Layout
 
 ```

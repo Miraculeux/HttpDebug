@@ -6,6 +6,7 @@ using System.Windows.Controls;
 using System.Windows.Data;
 using System.Windows.Input;
 using HttpDebug.Models;
+using HttpDebug.Services;
 using HttpDebug.ViewModels;
 using Microsoft.Win32;
 
@@ -100,6 +101,31 @@ public partial class SidebarView : UserControl
             {
                 File.WriteAllText(dlg.FileName, data);
             }
+        }
+    }
+
+    private async void ExportPowerShell_Click(object sender, RoutedEventArgs e)
+    {
+        e.Handled = true;
+        if (sender is not MenuItem item || State is not { } state) return;
+        var request = item.DataContext switch
+        {
+            SavedRequest saved => saved.Request,
+            HistoryEntry history => history.Request,
+            _ => null
+        };
+        if (request == null) return;
+
+        var includeAuth = item.Tag is "WithAuth";
+        try
+        {
+            var script = await PowerShellExporter.ExportAsync(request, state.Settings, includeAuth);
+            Clipboard.SetText(script);
+        }
+        catch (Exception error)
+        {
+            MessageBox.Show($"Could not copy PowerShell script: {error.Message}", "Export failed",
+                MessageBoxButton.OK, MessageBoxImage.Error);
         }
     }
 

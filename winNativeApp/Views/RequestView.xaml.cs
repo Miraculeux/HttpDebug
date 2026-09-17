@@ -87,12 +87,8 @@ public partial class RequestView : UserControl
         BodyContent.Visibility = tab == "body" ? Visibility.Visible : Visibility.Collapsed;
         AuthContent.Visibility = tab == "auth" ? Visibility.Visible : Visibility.Collapsed;
 
-        var accent = (System.Windows.Media.Brush)FindResource("Accent");
-        var dim = (System.Windows.Media.Brush)FindResource("TextSecondary");
-        ParamsTab.Foreground = tab == "params" ? accent : dim;
-        HeadersTab.Foreground = tab == "headers" ? accent : dim;
-        BodyTab.Foreground = tab == "body" ? accent : dim;
-        AuthTab.Foreground = tab == "auth" ? accent : dim;
+        foreach (var button in new[] { ParamsTab, HeadersTab, BodyTab, AuthTab })
+            System.Windows.Controls.Primitives.Selector.SetIsSelected(button, button.Tag is string tag && tag == tab);
     }
 
     private void BodyType_Click(object sender, RoutedEventArgs e)

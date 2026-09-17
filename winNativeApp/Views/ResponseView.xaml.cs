@@ -158,10 +158,8 @@ public partial class ResponseView : UserControl
         HeadersArea.Visibility = tab == "headers" ? Visibility.Visible : Visibility.Collapsed;
         BodyControls.Visibility = tab == "body" ? Visibility.Visible : Visibility.Collapsed;
 
-        var accent = (System.Windows.Media.Brush)FindResource("Accent");
-        var dim = (System.Windows.Media.Brush)FindResource("TextSecondary");
-        BodyTabButton.Foreground = tab == "body" ? accent : dim;
-        HeadersTabButton.Foreground = tab == "headers" ? accent : dim;
+        foreach (var button in new[] { BodyTabButton, HeadersTabButton })
+            System.Windows.Controls.Primitives.Selector.SetIsSelected(button, button.Tag is string tag && tag == tab);
     }
 
     private void ToggleRaw_Click(object sender, RoutedEventArgs e)
