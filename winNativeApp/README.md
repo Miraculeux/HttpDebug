@@ -1,9 +1,11 @@
 # HttpDebug — Windows Native (WPF)
 
-A native Windows port of the macOS SwiftUI `nativeApp/`. Built on **.NET 8** + **WPF**.
+A native Windows port of the macOS SwiftUI `nativeApp/`. Built on **.NET 10** + **WPF**.
 No web stack: no React, no Vite, no WebView2.
 
 ## Build & Run
+
+Requires the .NET 10 SDK on Windows. Framework-dependent builds require the .NET 10 Desktop Runtime to run. Visual Studio users need Visual Studio 2026 (18.0) or later with the .NET desktop development workload.
 
 ```powershell
 cd winNativeApp
@@ -11,6 +13,8 @@ dotnet run
 ```
 
 Or open `HttpDebug.sln` in Visual Studio and run the `HttpDebugNative` project.
+
+The native project treats compiler and NuGet warnings as errors in all configurations. To also fail on MSBuild warnings when building the solution, run `dotnet build HttpDebug.sln -warnaserror` from the repository root.
 
 ## Features (parity with `nativeApp/`)
 
@@ -44,7 +48,7 @@ pwsh -NoProfile -STA -File winNativeApp/Tests/PowerShellExporter.Tests.ps1
 
 ```
 winNativeApp/
-  HttpDebug.csproj       net8.0-windows, UseWPF
+  HttpDebug.csproj       net10.0-windows, UseWPF
   App.xaml(.cs)
   MainWindow.xaml(.cs)
   Themes/Dark.xaml       palette + control styles
