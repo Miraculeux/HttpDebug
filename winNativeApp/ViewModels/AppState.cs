@@ -269,8 +269,8 @@ public class AppState : ObservableObject
 
     public void UpdateSettings(AppSettings s)
     {
-        Settings = s;
         _storage.SaveSettings(s);
+        Settings = s;
     }
 
     public void ToggleSidebar() => SidebarVisible = !SidebarVisible;

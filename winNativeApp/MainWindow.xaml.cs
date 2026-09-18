@@ -1,6 +1,7 @@
 using System.Windows;
 using System.Windows.Input;
 using HttpDebug.ViewModels;
+using HttpDebug.Views;
 
 namespace HttpDebug;
 
@@ -28,6 +29,11 @@ public partial class MainWindow : Window
             if (e.PropertyName == nameof(AppState.SidebarVisible))
                 UpdateSidebarColumn();
         };
+    }
+
+    private void Settings_Click(object sender, RoutedEventArgs e)
+    {
+        new SettingsWindow(State.Settings, State.UpdateSettings) { Owner = this }.ShowDialog();
     }
 
     private void UpdateSidebarColumn()

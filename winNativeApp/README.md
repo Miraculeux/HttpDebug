@@ -26,7 +26,26 @@ The native project treats compiler and NuGet warnings as errors in all configura
 - Response panel: status / time / size, Body (tree or raw), Headers, Copy
 - Sidebar (Ctrl+J): Collections (create / save / load / delete / import / export) and History (auto-saved, search, open in new tab)
 - Dark theme matching the macOS surface palette
-- Persistent storage at `%USERPROFILE%\.httpdebug\` (settings, history, collections — same JSON shape used by the macOS app)
+- Configurable data folder for history and collections (defaults to `%USERPROFILE%\.httpdebug\`)
+
+## Storage Settings
+
+Open **Settings** using the gear button in the top-right corner. Enter an absolute data folder path or choose a folder, then select **Save**.
+
+- Existing history and collections are copied to the new folder. Original files remain unchanged.
+- Subsequent reads and writes use the new folder, including after restarting the app.
+- A destination containing history or collections is rejected to avoid overwriting data. Use an empty data folder.
+- Settings remain at `%USERPROFILE%\.httpdebug\settings.json` so the app can find the selected data folder on startup.
+- Cancel leaves the active path unchanged. Permission errors or failed saves are shown in the window.
+
+Data files can contain authentication tokens and response content. Choose a trusted folder with appropriate access permissions.
+
+Run the isolated storage and settings-window checks from the repository root:
+
+```powershell
+dotnet build winNativeApp/HttpDebug.csproj -warnaserror -p:OutDir=obj/StorageSettingsCheck/
+pwsh -NoProfile -STA -File winNativeApp/Tests/StorageSettings.Tests.ps1
+```
 
 ## PowerShell Export
 

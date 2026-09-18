@@ -21,15 +21,24 @@ public class StorageManager
     };
 
     private const int MaxHistory = 500;
+    private readonly string _settingsDirectory;
+    private string _storageDirectory;
+
+    public StorageManager(string? settingsDirectory = null)
+    {
+        _settingsDirectory = Path.GetFullPath(settingsDirectory ?? Path.Combine(
+            Environment.GetFolderPath(Environment.SpecialFolder.UserProfile), ".httpdebug"));
+        _storageDirectory = _settingsDirectory;
+    }
+
+    public string CurrentStoragePath => _storageDirectory;
 
     private string StorageDir
     {
         get
         {
-            var home = Environment.GetFolderPath(Environment.SpecialFolder.UserProfile);
-            var dir = Path.Combine(home, ".httpdebug");
-            Directory.CreateDirectory(dir);
-            return dir;
+            Directory.CreateDirectory(_storageDirectory);
+            return _storageDirectory;
         }
     }
 
@@ -43,7 +52,7 @@ public class StorageManager
         }
     }
 
-    private string SettingsFile => Path.Combine(StorageDir, "settings.json");
+    private string SettingsFile => Path.Combine(_settingsDirectory, "settings.json");
     private string HistoryFile => Path.Combine(StorageDir, "history.json");
 
     // Settings
@@ -52,15 +61,82 @@ public class StorageManager
         try
         {
             if (File.Exists(SettingsFile))
-                return JsonSerializer.Deserialize<AppSettings>(File.ReadAllText(SettingsFile), _opts) ?? new AppSettings();
+            {
+                var settings = JsonSerializer.Deserialize<AppSettings>(File.ReadAllText(SettingsFile), _opts) ?? new AppSettings();
+                _storageDirectory = ResolveStoragePath(settings.StoragePath);
+                settings.StoragePath = _storageDirectory;
+                return settings;
+            }
         }
         catch { }
-        return new AppSettings();
+        _storageDirectory = _settingsDirectory;
+        return new AppSettings { StoragePath = _storageDirectory };
     }
 
     public void SaveSettings(AppSettings settings)
     {
-        try { File.WriteAllText(SettingsFile, JsonSerializer.Serialize(settings, _opts)); } catch { }
+        var destination = ResolveStoragePath(settings.StoragePath);
+        var copiedFiles = new List<string>();
+        string? temporarySettings = null;
+        try
+        {
+            Directory.CreateDirectory(destination);
+            var probe = Path.Combine(destination, $".httpdebug-write-{Guid.NewGuid():N}");
+            using (new FileStream(probe, FileMode.CreateNew, FileAccess.Write, FileShare.None, 1, FileOptions.DeleteOnClose)) { }
+
+            if (!string.Equals(destination, _storageDirectory, StringComparison.OrdinalIgnoreCase))
+            {
+                var destinationCollections = Path.Combine(destination, "collections");
+                if (File.Exists(Path.Combine(destination, "history.json")) ||
+                    (Directory.Exists(destinationCollections) && Directory.EnumerateFileSystemEntries(destinationCollections).Any()))
+                    throw new IOException("The selected folder already contains history or collections. Choose an empty data folder.");
+
+                var sourceCollections = Path.Combine(_storageDirectory, "collections");
+                var sources = new List<string>();
+                var sourceHistory = Path.Combine(_storageDirectory, "history.json");
+                if (File.Exists(sourceHistory)) sources.Add(sourceHistory);
+                if (Directory.Exists(sourceCollections)) sources.AddRange(Directory.EnumerateFiles(sourceCollections, "*.json"));
+                foreach (var source in sources)
+                {
+                    var target = Path.Combine(destination, Path.GetRelativePath(_storageDirectory, source));
+                    Directory.CreateDirectory(Path.GetDirectoryName(target)!);
+                    using var input = File.OpenRead(source);
+                    using var output = new FileStream(target, FileMode.CreateNew, FileAccess.Write, FileShare.None);
+                    copiedFiles.Add(target);
+                    input.CopyTo(output);
+                }
+            }
+
+            Directory.CreateDirectory(_settingsDirectory);
+            temporarySettings = Path.Combine(_settingsDirectory, $"settings-{Guid.NewGuid():N}.tmp");
+            File.WriteAllText(temporarySettings, JsonSerializer.Serialize(settings, _opts));
+            File.Move(temporarySettings, SettingsFile, true);
+            _storageDirectory = destination;
+            settings.StoragePath = destination;
+        }
+        catch
+        {
+            foreach (var file in copiedFiles)
+            {
+                try { File.Delete(file); } catch { }
+            }
+            throw;
+        }
+        finally
+        {
+            if (temporarySettings != null)
+            {
+                try { File.Delete(temporarySettings); } catch { }
+            }
+        }
+    }
+
+    private string ResolveStoragePath(string path)
+    {
+        if (string.IsNullOrWhiteSpace(path)) return _settingsDirectory;
+        path = Environment.ExpandEnvironmentVariables(path.Trim());
+        if (!Path.IsPathFullyQualified(path)) throw new ArgumentException("Choose an absolute folder path.");
+        return Path.TrimEndingDirectorySeparator(Path.GetFullPath(path));
     }
 
     // Collections

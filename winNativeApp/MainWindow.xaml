@@ -17,7 +17,15 @@
     <DockPanel LastChildFill="True">
 
         <!-- Tab bar -->
-        <views:TabBarView DockPanel.Dock="Top" />
+        <DockPanel DockPanel.Dock="Top">
+            <Button DockPanel.Dock="Right" Click="Settings_Click" Style="{StaticResource IconButton}"
+                    Width="36" Height="32" Margin="4,2,8,2" ToolTip="Settings"
+                    AutomationProperties.Name="Settings">
+                <TextBlock FontFamily="Segoe MDL2 Assets" Text="&#xE713;" FontSize="16"
+                           Foreground="{StaticResource TextSecondary}" />
+            </Button>
+            <views:TabBarView />
+        </DockPanel>
         <Border DockPanel.Dock="Top" Height="1" Background="{StaticResource BorderBrush}" />
 
         <!-- URL bar -->
